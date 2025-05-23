@@ -1,0 +1,11 @@
+{
+  "name": "purescript-deno-bindings",
+  "version": "0.0.1",
+  "description": "PureScript bindings for Deno",
+  "devDependencies": {
+    "@types/deno": "^2.3.0",
+    "purescript": "^0.15.15",
+    "spago": "^0.93.44",
+    "typescript": "^5.8.3"
+  }
+}
