@@ -33,16 +33,6 @@ lock blocking file = makeAff \cb ->
   in
     runEffectFn4 _lock file blocking onSuccess (mkEffectFn1 onFailure) *> mempty
 
-foreign import _unlock :: EffectFn3 FsFile (Effect Unit) (EffectFn1 Error Unit) Unit
-
-unlock :: FsFile -> Aff Unit
-unlock file = makeAff \cb ->
-  let
-    onSuccess = cb (Right unit)
-    onFailure = cb <<< Left
-  in
-    runEffectFn3 _unlock file onSuccess (mkEffectFn1 onFailure) *> mempty
-
 foreign import _seek :: EffectFn5 Int SeekMode FsFile (Effect Unit) (EffectFn1 Error Unit) Unit
 
 foreign import data SeekMode :: Type
@@ -70,3 +60,13 @@ truncate size file = makeAff \cb ->
     onFailure = cb <<< Left
   in
     runEffectFn4 _truncate (toNullable size) file onSuccess (mkEffectFn1 onFailure) *> mempty
+
+foreign import _unlock :: EffectFn3 FsFile (Effect Unit) (EffectFn1 Error Unit) Unit
+
+unlock :: FsFile -> Aff Unit
+unlock file = makeAff \cb ->
+  let
+    onSuccess = cb (Right unit)
+    onFailure = cb <<< Left
+  in
+    runEffectFn3 _unlock file onSuccess (mkEffectFn1 onFailure) *> mempty

@@ -25,17 +25,6 @@ export const _lock: EffectFn4<
     .catch(onError);
 };
 
-export const _unlock: EffectFn3<
-  Deno.FsFile,
-  () => void,
-  EffectFn1<Error, void>,
-  void
-> = (file, onSuccess, onError) => {
-  file.unlock()
-    .then(onSuccess)
-    .catch(onError);
-};
-
 export const seekStart: Deno.SeekMode = Deno.SeekMode.Start;
 
 export const seekCurrent: Deno.SeekMode = Deno.SeekMode.Current;
@@ -63,6 +52,17 @@ export const _truncate: EffectFn4<
   void
 > = (size, file, onSuccess, onError) => {
   file.truncate(size ?? undefined)
+    .then(onSuccess)
+    .catch(onError);
+};
+
+export const _unlock: EffectFn3<
+  Deno.FsFile,
+  () => void,
+  EffectFn1<Error, void>,
+  void
+> = (file, onSuccess, onError) => {
+  file.unlock()
     .then(onSuccess)
     .catch(onError);
 };
