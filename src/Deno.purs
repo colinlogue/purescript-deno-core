@@ -62,3 +62,13 @@ foreign import _exit :: EffectFn1 Int Unit
 
 exit :: Int -> Effect Unit
 exit code = runEffectFn1 _exit code
+
+foreign import _chmod :: EffectFn4 StringOrUrl Int (Effect Unit) (EffectFn1 Error Unit) Unit
+
+chmod :: forall a. IsStringOrUrl a => a -> Int -> Aff Unit
+chmod path mode = makeAff \cb ->
+  let
+    onSuccess = cb (Right unit)
+    onFailure = cb <<< Left
+  in
+    runEffectFn4 _chmod (toStringOrUrl path) mode onSuccess (mkEffectFn1 onFailure) *> mempty

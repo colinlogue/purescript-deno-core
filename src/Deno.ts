@@ -32,3 +32,9 @@ export const _chdir: EffectFn1<string | URL, void> = (path) => {
 export const _exit: EffectFn1<number, void> = (code) => {
   Deno.exit(code);
 };
+
+export const _chmod: EffectFn4<string | URL, number, () => void, EffectFn1<Error, void>, void> = (path, mode, onSuccess, onError) => {
+  Deno.chmod(path, mode)
+    .then(onSuccess)
+    .catch(onError);
+};
