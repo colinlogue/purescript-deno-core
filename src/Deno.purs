@@ -57,3 +57,8 @@ foreign import _chdir :: EffectFn1 StringOrUrl Unit
 
 chdir :: forall a. IsStringOrUrl a => a -> Effect Unit
 chdir path = runEffectFn1 _chdir $ toStringOrUrl path
+
+foreign import _exit :: EffectFn1 Int Unit
+
+exit :: Int -> Effect Unit
+exit code = runEffectFn1 _exit code
