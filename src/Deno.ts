@@ -102,3 +102,9 @@ export const _remove: EffectFn4<string | URL, boolean, () => void, EffectFn1<Err
     .then(onSuccess)
     .catch(onError);
 };
+
+export const _rename: EffectFn4<string | URL, string | URL, () => void, EffectFn1<Error, void>, void> = (oldPath, newPath, onSuccess, onError) => {
+  Deno.rename(oldPath, newPath)
+    .then(onSuccess)
+    .catch(onError);
+};

@@ -142,3 +142,13 @@ remove path recursive = makeAff \cb ->
     onFailure = cb <<< Left
   in
     runEffectFn4 _remove (toStringOrUrl path) recursive onSuccess (mkEffectFn1 onFailure) *> mempty
+
+foreign import _rename :: EffectFn4 StringOrUrl StringOrUrl (Effect Unit) (EffectFn1 Error Unit) Unit
+
+rename :: forall a b. IsStringOrUrl a => IsStringOrUrl b => a -> b -> Aff Unit
+rename oldPath newPath = makeAff \cb ->
+  let
+    onSuccess = cb (Right unit)
+    onFailure = cb <<< Left
+  in
+    runEffectFn4 _rename (toStringOrUrl oldPath) (toStringOrUrl newPath) onSuccess (mkEffectFn1 onFailure) *> mempty
