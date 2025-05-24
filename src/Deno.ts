@@ -96,3 +96,9 @@ export const osRelease = (): string => {
 export const osUptime = (): number => {
   return Deno.osUptime();
 };
+
+export const _remove: EffectFn4<string | URL, boolean, () => void, EffectFn1<Error, void>, void> = (path, recursive, onSuccess, onError) => {
+  Deno.remove(path, { recursive })
+    .then(onSuccess)
+    .catch(onError);
+};

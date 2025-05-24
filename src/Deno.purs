@@ -132,3 +132,13 @@ link oldPath newPath = makeAff \cb ->
 foreign import osRelease :: Effect String
 
 foreign import osUptime :: Effect Number
+
+foreign import _remove :: EffectFn4 StringOrUrl Boolean (Effect Unit) (EffectFn1 Error Unit) Unit
+
+remove :: forall a. IsStringOrUrl a => a -> Boolean -> Aff Unit
+remove path recursive = makeAff \cb ->
+  let
+    onSuccess = cb (Right unit)
+    onFailure = cb <<< Left
+  in
+    runEffectFn4 _remove (toStringOrUrl path) recursive onSuccess (mkEffectFn1 onFailure) *> mempty
