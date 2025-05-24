@@ -8,24 +8,72 @@ module Web.Streams.Writer
   , releaseLock
   ) where
 
+import Prelude
+
+import Data.Either (Either(..))
 import Data.Maybe (Maybe)
+import Data.Nullable (Nullable, toNullable)
 import Effect (Effect)
-import Prelude (Unit)
-import Promise (Promise)
+import Effect.Aff (Aff, makeAff)
+import Effect.Exception (Error)
+import Effect.Uncurried (EffectFn1, EffectFn3, EffectFn4, mkEffectFn1, runEffectFn1, runEffectFn3, runEffectFn4)
 
 -- Writer is a higher-kinded type that takes a chunk type parameter
 foreign import data Writer :: Type -> Type
 
 -- Methods
-foreign import write :: forall chunk. chunk -> Writer chunk -> Effect (Promise Unit)
+foreign import _write :: forall chunk. EffectFn4 (Writer chunk) chunk (Effect Unit) (EffectFn1 Error Unit) Unit
 
-foreign import close :: forall chunk. Writer chunk -> Effect (Promise Unit)
+write :: forall chunk. chunk -> Writer chunk -> Aff Unit
+write chunk writer = makeAff \cb ->
+  let
+    onSuccess = cb (Right unit)
+    onError = cb <<< Left
+  in
+    runEffectFn4 _write writer chunk onSuccess (mkEffectFn1 onError) *> mempty
 
-foreign import abort :: forall chunk. Maybe String -> Writer chunk -> Effect (Promise Unit)
+foreign import _close :: forall chunk. EffectFn3 (Writer chunk) (Effect Unit) (EffectFn1 Error Unit) Unit
 
-foreign import releaseLock :: forall chunk. Writer chunk -> Effect Unit
+close :: forall chunk. Writer chunk -> Aff Unit
+close writer = makeAff \cb ->
+  let
+    onSuccess = cb (Right unit)
+    onError = cb <<< Left
+  in
+    runEffectFn3 _close writer onSuccess (mkEffectFn1 onError) *> mempty
 
--- Properties (Promises)
-foreign import closed :: forall chunk. Writer chunk -> Effect (Promise Unit)
+foreign import _abort :: forall chunk. EffectFn4 (Writer chunk) (Nullable String) (Effect Unit) (EffectFn1 Error Unit) Unit
 
-foreign import ready :: forall chunk. Writer chunk -> Effect (Promise Unit)
+abort :: forall chunk. Maybe String -> Writer chunk -> Aff Unit
+abort reason writer = makeAff \cb ->
+  let
+    onSuccess = cb (Right unit)
+    onError = cb <<< Left
+  in
+    runEffectFn4 _abort writer (toNullable reason) onSuccess (mkEffectFn1 onError) *> mempty
+
+foreign import _releaseLock :: forall chunk. EffectFn1 (Writer chunk) Unit
+
+releaseLock :: forall chunk. Writer chunk -> Effect Unit
+releaseLock = runEffectFn1 _releaseLock
+
+-- Properties (Promises converted to Aff)
+foreign import _closed :: forall chunk. EffectFn3 (Writer chunk) (Effect Unit) (EffectFn1 Error Unit) Unit
+
+closed :: forall chunk. Writer chunk -> Aff Unit
+closed writer = makeAff \cb ->
+  let
+    onSuccess = cb (Right unit)
+    onError = cb <<< Left
+  in
+    runEffectFn3 _closed writer onSuccess (mkEffectFn1 onError) *> mempty
+
+foreign import _ready :: forall chunk. EffectFn3 (Writer chunk) (Effect Unit) (EffectFn1 Error Unit) Unit
+
+ready :: forall chunk. Writer chunk -> Aff Unit
+ready writer = makeAff \cb ->
+  let
+    onSuccess = cb (Right unit)
+    onError = cb <<< Left
+  in
+    runEffectFn3 _ready writer onSuccess (mkEffectFn1 onError) *> mempty
