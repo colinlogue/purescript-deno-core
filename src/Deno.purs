@@ -4,7 +4,7 @@ import Prelude
 
 import Data.Either (Either(..))
 import Data.IsStringOrUrl (class IsStringOrUrl, StringOrUrl, toStringOrUrl)
-import Data.Maybe (Maybe, maybe)
+import Data.Maybe (Maybe)
 import Data.Nullable (Nullable, toNullable)
 import Deno.FsFile (FsFile)
 import Deno.MkdirOptions (MkdirOptions)
@@ -84,3 +84,5 @@ chown path uid gid = makeAff \cb ->
     onFailure = cb <<< Left
   in
     runEffectFn5 _chown (toStringOrUrl path) (toNullable uid) (toNullable gid) onSuccess (mkEffectFn1 onFailure) *> mempty
+
+foreign import consoleSize :: Effect { columns :: Int, rows :: Int }

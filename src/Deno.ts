@@ -50,3 +50,7 @@ export const _chown: EffectFn5<string | URL, number | null, number | null, () =>
     .then(onSuccess)
     .catch(onError);
 };
+
+export const consoleSize = (): { columns: number; rows: number } => {
+  return Deno.consoleSize();
+};
