@@ -70,3 +70,7 @@ export const _create: EffectFn3<string | URL, EffectFn1<Deno.FsFile, void>, Effe
 export const cwd = (): string => {
   return Deno.cwd();
 };
+
+export const execPath = (): string => {
+  return Deno.execPath();
+};
