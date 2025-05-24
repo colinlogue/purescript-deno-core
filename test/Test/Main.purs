@@ -15,6 +15,8 @@ import Test.Spec.Reporter (consoleReporter)
 import Test.Spec.Runner.Deno (runSpecAndExitProcess)
 import Web.Streams.WritableStream as WritableStream
 
+foreign import stdoutIsTerminal :: Effect Boolean
+
 main :: Effect Unit
 main = runSpecAndExitProcess [ consoleReporter ] spec
   where
@@ -30,9 +32,10 @@ main = runSpecAndExitProcess [ consoleReporter ] spec
             execPath `shouldSatisfy` String.contains (String.Pattern "deno")
 
           it "should get console size" do
-            size <- liftEffect Deno.consoleSize
-            size.columns `shouldSatisfy` (_ > 0)
-            size.rows `shouldSatisfy` (_ > 0)
+            liftEffect stdoutIsTerminal >>= flip when do
+              size <- liftEffect Deno.consoleSize
+              size.columns `shouldSatisfy` (_ > 0)
+              size.rows `shouldSatisfy` (_ > 0)
 
         describe "File operations" do
           it "should write and read text files" do

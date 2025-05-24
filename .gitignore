@@ -10,5 +10,6 @@ generated-docs/
 .psa*
 .spago
 src/**/*.js
+test/**/*.js
 .vscode
 .spec-results
