@@ -81,3 +81,7 @@ export const _unlock: EffectFn3<
 export const _readable: EffectFn1<Deno.FsFile, ReadableStream<Uint8Array>> = (file) => {
   return file.readable;
 };
+
+export const _writable: EffectFn1<Deno.FsFile, WritableStream<Uint8Array>> = (file) => {
+  return file.writable;
+};

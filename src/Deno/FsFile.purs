@@ -11,6 +11,7 @@ import Effect.Aff (Aff, makeAff)
 import Effect.Exception (Error)
 import Effect.Uncurried (EffectFn1, EffectFn3, EffectFn4, EffectFn5, mkEffectFn1, runEffectFn1, runEffectFn3, runEffectFn4, runEffectFn5)
 import Web.Streams.ReadableStream (ReadableStream)
+import Web.Streams.WritableStream (WritableStream)
 
 
 foreign import data FsFile :: Type
@@ -21,6 +22,11 @@ foreign import _readable :: EffectFn1 FsFile (ReadableStream Uint8Array)
 
 readable :: FsFile -> Effect (ReadableStream Uint8Array)
 readable = runEffectFn1 _readable
+
+foreign import _writable :: EffectFn1 FsFile (WritableStream Uint8Array)
+
+writable :: FsFile -> Effect (WritableStream Uint8Array)
+writable = runEffectFn1 _writable
 
 -- Methods
 
