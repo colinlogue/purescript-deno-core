@@ -2,6 +2,7 @@ module Deno.FsFile where
 
 import Prelude
 
+import Data.ArrayBuffer.Types (Uint8Array)
 import Data.Either (Either(..))
 import Data.Maybe (Maybe)
 import Data.Nullable (Nullable, toNullable)
@@ -9,9 +10,19 @@ import Effect (Effect)
 import Effect.Aff (Aff, makeAff)
 import Effect.Exception (Error)
 import Effect.Uncurried (EffectFn1, EffectFn3, EffectFn4, EffectFn5, mkEffectFn1, runEffectFn1, runEffectFn3, runEffectFn4, runEffectFn5)
+import Web.Streams.ReadableStream (ReadableStream)
 
 
 foreign import data FsFile :: Type
+
+-- Properties
+
+foreign import _readable :: EffectFn1 FsFile (ReadableStream Uint8Array)
+
+readable :: FsFile -> Effect (ReadableStream Uint8Array)
+readable = runEffectFn1 _readable
+
+-- Methods
 
 foreign import _close :: EffectFn1 FsFile Unit
 

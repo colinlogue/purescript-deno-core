@@ -2,11 +2,13 @@ package:
   name: deno-bindings
   dependencies:
     - aff
+    - arraybuffer
     - console
     - effect
     - either
     - nullable
     - prelude
+    - web-streams
     - web-url
   test:
     main: Test.Main

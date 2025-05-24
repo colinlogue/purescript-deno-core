@@ -77,3 +77,7 @@ export const _unlock: EffectFn3<
     .then(onSuccess)
     .catch(onError);
 };
+
+export const _readable: EffectFn1<Deno.FsFile, ReadableStream<Uint8Array>> = (file) => {
+  return file.readable;
+};
