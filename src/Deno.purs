@@ -1,4 +1,31 @@
-module Deno where
+module Deno
+  ( SymlinkType(..)
+  , chdir
+  , chmod
+  , chown
+  , consoleSize
+  , copyFile
+  , create
+  , cwd
+  , execPath
+  , exit
+  , gid
+  , hostname
+  , link
+  , mkdir
+  , open
+  , osRelease
+  , osUptime
+  , readTextFile
+  , remove
+  , rename
+  , symlink
+  , truncate
+  , uid
+  , umask
+  , unrefTimer
+  , writeTextFile
+  ) where
 
 import Prelude
 
