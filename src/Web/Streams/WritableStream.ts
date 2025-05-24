@@ -1,10 +1,10 @@
 import type { EffectFn1, EffectFn2 } from "../../purescript.d.ts";
 
-export const locked: EffectFn1<WritableStream<unknown>, boolean> = (stream) => {
+export const _locked: EffectFn1<WritableStream<unknown>, boolean> = (stream) => {
   return stream.locked;
 };
 
-export const abort: EffectFn2<
+export const _abort: EffectFn2<
   string | null,
   WritableStream<unknown>,
   Promise<void>
@@ -12,10 +12,10 @@ export const abort: EffectFn2<
   return stream.abort(reason === null ? undefined : reason);
 };
 
-export const close: EffectFn1<WritableStream<unknown>, Promise<void>> = (stream) => {
+export const _close: EffectFn1<WritableStream<unknown>, Promise<void>> = (stream) => {
   return stream.close();
 };
 
-export const getWriter: EffectFn1<WritableStream<unknown>, WritableStreamDefaultWriter<unknown>> = (stream) => {
+export const _getWriter: EffectFn1<WritableStream<unknown>, WritableStreamDefaultWriter<unknown>> = (stream) => {
   return stream.getWriter();
 };
