@@ -6,6 +6,7 @@ import Data.Either (Either(..))
 import Data.IsStringOrUrl (class IsStringOrUrl, StringOrUrl, toStringOrUrl)
 import Data.Maybe (Maybe)
 import Data.Nullable (Nullable, toNullable)
+import Data.Nullable as Nullable
 import Deno.FsFile (FsFile)
 import Deno.MkdirOptions (MkdirOptions)
 import Deno.OpenOptions (OpenOptions)
@@ -78,12 +79,12 @@ chmod path mode = makeAff \cb ->
 foreign import _chown :: EffectFn5 StringOrUrl (Nullable Int) (Nullable Int) (Effect Unit) (EffectFn1 Error Unit) Unit
 
 chown :: forall a. IsStringOrUrl a => a -> Maybe Int -> Maybe Int -> Aff Unit
-chown path uid gid = makeAff \cb ->
+chown path uid gid' = makeAff \cb ->
   let
     onSuccess = cb (Right unit)
     onFailure = cb <<< Left
   in
-    runEffectFn5 _chown (toStringOrUrl path) (toNullable uid) (toNullable gid) onSuccess (mkEffectFn1 onFailure) *> mempty
+    runEffectFn5 _chown (toStringOrUrl path) (toNullable uid) (toNullable gid') onSuccess (mkEffectFn1 onFailure) *> mempty
 
 foreign import consoleSize :: Effect { columns :: Int, rows :: Int }
 
@@ -110,3 +111,8 @@ create path = makeAff \cb ->
 foreign import cwd :: Effect String
 
 foreign import execPath :: Effect String
+
+foreign import _gid :: Effect (Nullable Int)
+
+gid :: Effect (Maybe Int)
+gid = Nullable.toMaybe <$> _gid

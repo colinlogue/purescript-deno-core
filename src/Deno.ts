@@ -74,3 +74,7 @@ export const cwd = (): string => {
 export const execPath = (): string => {
   return Deno.execPath();
 };
+
+export const _gid = (): number | null => {
+  return Deno.gid();
+};
