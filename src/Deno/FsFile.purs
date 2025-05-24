@@ -53,6 +53,16 @@ seek offset mode file = makeAff \cb ->
 
 foreign import _truncate :: EffectFn4 (Nullable Int) FsFile (Effect Unit) (EffectFn1 Error Unit) Unit
 
+foreign import _sync :: EffectFn3 FsFile (Effect Unit) (EffectFn1 Error Unit) Unit
+
+sync :: FsFile -> Aff Unit
+sync file = makeAff \cb ->
+  let
+    onSuccess = cb (Right unit)
+    onFailure = cb <<< Left
+  in
+    runEffectFn3 _sync file onSuccess (mkEffectFn1 onFailure) *> mempty
+
 truncate :: Maybe Int -> FsFile -> Aff Unit
 truncate size file = makeAff \cb ->
   let

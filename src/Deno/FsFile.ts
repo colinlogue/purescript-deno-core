@@ -44,6 +44,17 @@ export const _seek: EffectFn5<
     .catch(onError);
 };
 
+export const _sync: EffectFn3<
+  Deno.FsFile,
+  () => void,
+  EffectFn1<Error, void>,
+  void
+> = (file, onSuccess, onError) => {
+  file.sync()
+    .then(onSuccess)
+    .catch(onError);
+};
+
 export const _truncate: EffectFn4<
   number | null,
   Deno.FsFile,
