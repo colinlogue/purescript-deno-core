@@ -18,6 +18,11 @@ foreign import _close :: EffectFn1 FsFile Unit
 close :: FsFile -> Effect Unit
 close = runEffectFn1 _close
 
+foreign import _isTerminal :: EffectFn1 FsFile Boolean
+
+isTerminal :: FsFile -> Effect Boolean
+isTerminal = runEffectFn1 _isTerminal
+
 foreign import _lock :: EffectFn4 FsFile Boolean (Effect Unit) (EffectFn1 Error Unit) Unit
 
 lock :: Boolean -> FsFile -> Aff Unit
