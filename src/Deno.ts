@@ -28,3 +28,7 @@ export const _open: EffectFn4<Deno.OpenOptions, string | URL, EffectFn1<Deno.FsF
 export const _chdir: EffectFn1<string | URL, void> = (path) => {
   Deno.chdir(path);
 };
+
+export const _exit: EffectFn1<number, void> = (code) => {
+  Deno.exit(code);
+};
