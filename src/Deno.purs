@@ -50,8 +50,8 @@ chdir path = runEffectFn1 _chdir $ toStringOrUrl path
 
 foreign import _chmod :: EffectFn4 StringOrUrl Int (Effect Unit) (EffectFn1 Error Unit) Unit
 
-chmod :: forall a. IsStringOrUrl a => a -> Int -> Aff Unit
-chmod path mode = makeAff \cb ->
+chmod :: forall a. IsStringOrUrl a => Int -> a -> Aff Unit
+chmod mode path = makeAff \cb ->
   let
     onSuccess = cb (Right unit)
     onFailure = cb <<< Left
@@ -60,8 +60,8 @@ chmod path mode = makeAff \cb ->
 
 foreign import _chown :: EffectFn5 StringOrUrl (Nullable Int) (Nullable Int) (Effect Unit) (EffectFn1 Error Unit) Unit
 
-chown :: forall a. IsStringOrUrl a => a -> Maybe Int -> Maybe Int -> Aff Unit
-chown path uid' gid' = makeAff \cb ->
+chown :: forall a. IsStringOrUrl a => Maybe Int -> Maybe Int -> a -> Aff Unit
+chown uid' gid' path = makeAff \cb ->
   let
     onSuccess = cb (Right unit)
     onFailure = cb <<< Left
@@ -152,8 +152,8 @@ readTextFile path = makeAff \cb ->
 
 foreign import _remove :: EffectFn4 StringOrUrl Boolean (Effect Unit) (EffectFn1 Error Unit) Unit
 
-remove :: forall a. IsStringOrUrl a => a -> Boolean -> Aff Unit
-remove path recursive = makeAff \cb ->
+remove :: forall a. IsStringOrUrl a => Boolean -> a -> Aff Unit
+remove recursive path = makeAff \cb ->
   let
     onSuccess = cb (Right unit)
     onFailure = cb <<< Left
