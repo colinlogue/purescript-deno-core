@@ -88,3 +88,11 @@ export const _link: EffectFn4<string, string, () => void, EffectFn1<Error, void>
     .then(onSuccess)
     .catch(onError);
 };
+
+export const osRelease = (): string => {
+  return Deno.osRelease();
+};
+
+export const osUptime = (): number => {
+  return Deno.osUptime();
+};

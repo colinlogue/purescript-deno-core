@@ -128,3 +128,7 @@ link oldPath newPath = makeAff \cb ->
     onFailure = cb <<< Left
   in
     runEffectFn4 _link oldPath newPath onSuccess (mkEffectFn1 onFailure) *> mempty
+
+foreign import osRelease :: Effect String
+
+foreign import osUptime :: Effect Number
