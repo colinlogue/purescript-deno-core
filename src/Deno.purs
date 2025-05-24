@@ -43,55 +43,10 @@ import Effect.Aff (Aff, Error, makeAff)
 import Effect.Uncurried (EffectFn1, EffectFn3, EffectFn4, EffectFn5, mkEffectFn1, runEffectFn1, runEffectFn3, runEffectFn4, runEffectFn5)
 
 
-foreign import _mkdir :: EffectFn4 MkdirOptions StringOrUrl (Effect Unit) (EffectFn1 Error Unit) Unit
-
-mkdir :: forall a. IsStringOrUrl a => MkdirOptions -> a -> Aff Unit
-mkdir opts path = makeAff \cb ->
-  let
-    onSuccess = cb (Right unit)
-    onFailure = cb <<< Left
-  in
-    runEffectFn4 _mkdir opts (toStringOrUrl path) onSuccess (mkEffectFn1 onFailure) *> mempty
-
-foreign import _readTextFile :: EffectFn3 StringOrUrl (EffectFn1 String Unit) (EffectFn1 Error Unit) Unit
-
-readTextFile :: forall a. IsStringOrUrl a => a -> Aff String
-readTextFile path = makeAff \cb ->
-  let
-    onSuccess = cb <<< Right
-    onFailure = cb <<< Left
-  in
-    runEffectFn3 _readTextFile (toStringOrUrl path) (mkEffectFn1 onSuccess) (mkEffectFn1 onFailure) *> mempty
-
-foreign import _writeTextFile :: EffectFn5 WriteFileOptions String String (Effect Unit) (EffectFn1 Error Unit) Unit
-
-writeTextFile :: WriteFileOptions -> String -> String -> Aff Unit
-writeTextFile opts path content = makeAff \cb ->
-  let
-    onSuccess = cb (Right unit)
-    onFailure = cb <<< Left
-  in
-    runEffectFn5 _writeTextFile opts path content onSuccess (mkEffectFn1 onFailure) *> mempty
-
-foreign import _open :: EffectFn4 OpenOptions StringOrUrl (EffectFn1 FsFile Unit) (EffectFn1 Error Unit) Unit
-
-open :: forall a. IsStringOrUrl a => OpenOptions -> a -> Aff FsFile
-open opts path = makeAff \cb ->
-  let
-    onSuccess = cb <<< Right
-    onFailure = cb <<< Left
-  in
-    runEffectFn4 _open opts (toStringOrUrl path) (mkEffectFn1 onSuccess) (mkEffectFn1 onFailure) *> mempty
-
 foreign import _chdir :: EffectFn1 StringOrUrl Unit
 
 chdir :: forall a. IsStringOrUrl a => a -> Effect Unit
 chdir path = runEffectFn1 _chdir $ toStringOrUrl path
-
-foreign import _exit :: EffectFn1 Int Unit
-
-exit :: Int -> Effect Unit
-exit code = runEffectFn1 _exit code
 
 foreign import _chmod :: EffectFn4 StringOrUrl Int (Effect Unit) (EffectFn1 Error Unit) Unit
 
@@ -139,6 +94,11 @@ foreign import cwd :: Effect String
 
 foreign import execPath :: Effect String
 
+foreign import _exit :: EffectFn1 Int Unit
+
+exit :: Int -> Effect Unit
+exit code = runEffectFn1 _exit code
+
 foreign import _gid :: Effect (Nullable Int)
 
 gid :: Effect (Maybe Int)
@@ -156,9 +116,39 @@ link oldPath newPath = makeAff \cb ->
   in
     runEffectFn4 _link oldPath newPath onSuccess (mkEffectFn1 onFailure) *> mempty
 
+foreign import _mkdir :: EffectFn4 MkdirOptions StringOrUrl (Effect Unit) (EffectFn1 Error Unit) Unit
+
+mkdir :: forall a. IsStringOrUrl a => MkdirOptions -> a -> Aff Unit
+mkdir opts path = makeAff \cb ->
+  let
+    onSuccess = cb (Right unit)
+    onFailure = cb <<< Left
+  in
+    runEffectFn4 _mkdir opts (toStringOrUrl path) onSuccess (mkEffectFn1 onFailure) *> mempty
+
+foreign import _open :: EffectFn4 OpenOptions StringOrUrl (EffectFn1 FsFile Unit) (EffectFn1 Error Unit) Unit
+
+open :: forall a. IsStringOrUrl a => OpenOptions -> a -> Aff FsFile
+open opts path = makeAff \cb ->
+  let
+    onSuccess = cb <<< Right
+    onFailure = cb <<< Left
+  in
+    runEffectFn4 _open opts (toStringOrUrl path) (mkEffectFn1 onSuccess) (mkEffectFn1 onFailure) *> mempty
+
 foreign import osRelease :: Effect String
 
 foreign import osUptime :: Effect Number
+
+foreign import _readTextFile :: EffectFn3 StringOrUrl (EffectFn1 String Unit) (EffectFn1 Error Unit) Unit
+
+readTextFile :: forall a. IsStringOrUrl a => a -> Aff String
+readTextFile path = makeAff \cb ->
+  let
+    onSuccess = cb <<< Right
+    onFailure = cb <<< Left
+  in
+    runEffectFn3 _readTextFile (toStringOrUrl path) (mkEffectFn1 onSuccess) (mkEffectFn1 onFailure) *> mempty
 
 foreign import _remove :: EffectFn4 StringOrUrl Boolean (Effect Unit) (EffectFn1 Error Unit) Unit
 
@@ -224,3 +214,13 @@ foreign import _unrefTimer :: EffectFn1 Int Unit
 
 unrefTimer :: Int -> Effect Unit
 unrefTimer timerId = runEffectFn1 _unrefTimer timerId
+
+foreign import _writeTextFile :: EffectFn5 WriteFileOptions String String (Effect Unit) (EffectFn1 Error Unit) Unit
+
+writeTextFile :: WriteFileOptions -> String -> String -> Aff Unit
+writeTextFile opts path content = makeAff \cb ->
+  let
+    onSuccess = cb (Right unit)
+    onFailure = cb <<< Left
+  in
+    runEffectFn5 _writeTextFile opts path content onSuccess (mkEffectFn1 onFailure) *> mempty
