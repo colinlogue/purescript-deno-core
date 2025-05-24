@@ -86,3 +86,13 @@ chown path uid gid = makeAff \cb ->
     runEffectFn5 _chown (toStringOrUrl path) (toNullable uid) (toNullable gid) onSuccess (mkEffectFn1 onFailure) *> mempty
 
 foreign import consoleSize :: Effect { columns :: Int, rows :: Int }
+
+foreign import _copyFile :: EffectFn4 StringOrUrl StringOrUrl (Effect Unit) (EffectFn1 Error Unit) Unit
+
+copyFile :: forall a b. IsStringOrUrl a => IsStringOrUrl b => a -> b -> Aff Unit
+copyFile from to = makeAff \cb ->
+  let
+    onSuccess = cb (Right unit)
+    onFailure = cb <<< Left
+  in
+    runEffectFn4 _copyFile (toStringOrUrl from) (toStringOrUrl to) onSuccess (mkEffectFn1 onFailure) *> mempty

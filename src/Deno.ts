@@ -54,3 +54,9 @@ export const _chown: EffectFn5<string | URL, number | null, number | null, () =>
 export const consoleSize = (): { columns: number; rows: number } => {
   return Deno.consoleSize();
 };
+
+export const _copyFile: EffectFn4<string | URL, string | URL, () => void, EffectFn1<Error, void>, void> = (from, to, onSuccess, onError) => {
+  Deno.copyFile(from, to)
+    .then(onSuccess)
+    .catch(onError);
+};
