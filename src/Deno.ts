@@ -186,7 +186,7 @@ export const _truncate: EffectFn4<
   EffectFn1<Error, void>,
   void
 > = (path, len, onSuccess, onError) => {
-  Deno.truncate(path, len ?? undefined)
+  Deno.truncate(path, len === null ? undefined : len)
     .then(onSuccess)
     .catch(onError);
 };
@@ -196,7 +196,7 @@ export const _uid = (): number | null => {
 };
 
 export const _umask: EffectFn1<number | null, number> = (mask) => {
-  return Deno.umask(mask ?? undefined);
+  return Deno.umask(mask === null ? undefined : mask);
 };
 
 export const _unrefTimer: EffectFn1<number, void> = (timerId) => {

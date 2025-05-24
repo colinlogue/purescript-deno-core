@@ -62,7 +62,7 @@ export const _truncate: EffectFn4<
   EffectFn1<Error, void>,
   void
 > = (size, file, onSuccess, onError) => {
-  file.truncate(size ?? undefined)
+  file.truncate(size === null ? undefined : size)
     .then(onSuccess)
     .catch(onError);
 };
