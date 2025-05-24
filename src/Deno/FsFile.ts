@@ -9,7 +9,7 @@ export const _close: EffectFn1<Deno.FsFile, void> = (file) => {
   file.close();
 };
 
-export const isTerminal: EffectFn1<Deno.FsFile, boolean> = (file) => {
+export const _isTerminal: EffectFn1<Deno.FsFile, boolean> = (file) => {
   return file.isTerminal();
 };
 
