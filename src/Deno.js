@@ -21,3 +21,6 @@ export const _open = (opts, path, onSuccess, onError) => {
 export const _chdir = (path) => {
     Deno.chdir(path);
 };
+export const _exit = (code) => {
+    Deno.exit(code);
+};
