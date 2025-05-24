@@ -187,3 +187,8 @@ foreign import _uid :: Effect (Nullable Int)
 
 uid :: Effect (Maybe Int)
 uid = Nullable.toMaybe <$> _uid
+
+foreign import _umask :: EffectFn1 (Nullable Int) Int
+
+umask :: Maybe Int -> Effect Int
+umask mask = runEffectFn1 _umask (toNullable mask)

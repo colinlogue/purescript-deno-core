@@ -124,3 +124,7 @@ export const _truncate: EffectFn4<string, number | null, () => void, EffectFn1<E
 export const _uid = (): number | null => {
   return Deno.uid();
 };
+
+export const _umask: EffectFn1<number | null, number> = (mask) => {
+  return Deno.umask(mask ?? undefined);
+};
