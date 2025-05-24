@@ -108,3 +108,9 @@ export const _rename: EffectFn4<string | URL, string | URL, () => void, EffectFn
     .then(onSuccess)
     .catch(onError);
 };
+
+export const _symlink: EffectFn5<string | URL, string | URL, "file" | "dir" | "junction" | null, () => void, EffectFn1<Error, void>, void> = (oldPath, newPath, type, onSuccess, onError) => {
+  Deno.symlink(oldPath, newPath, type ? { type } : undefined)
+    .then(onSuccess)
+    .catch(onError);
+};

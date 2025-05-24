@@ -152,3 +152,22 @@ rename oldPath newPath = makeAff \cb ->
     onFailure = cb <<< Left
   in
     runEffectFn4 _rename (toStringOrUrl oldPath) (toStringOrUrl newPath) onSuccess (mkEffectFn1 onFailure) *> mempty
+
+data SymlinkType = File | Dir | Junction
+
+symlinkTypeToString :: SymlinkType -> String
+symlinkTypeToString = case _ of
+  File -> "file"
+  Dir -> "dir"
+  Junction -> "junction"
+
+foreign import _symlink :: EffectFn5 StringOrUrl StringOrUrl (Nullable String) (Effect Unit) (EffectFn1 Error Unit) Unit
+
+symlink :: forall a b. IsStringOrUrl a => IsStringOrUrl b => Maybe SymlinkType -> a -> b -> Aff Unit
+symlink symlinkType oldPath newPath = makeAff \cb ->
+  let
+    onSuccess = cb (Right unit)
+    onFailure = cb <<< Left
+    symlinkType' = toNullable $ symlinkTypeToString <$> symlinkType
+  in
+    runEffectFn5 _symlink (toStringOrUrl oldPath) (toStringOrUrl newPath) symlinkType' onSuccess (mkEffectFn1 onFailure) *> mempty
