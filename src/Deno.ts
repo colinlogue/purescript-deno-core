@@ -120,3 +120,7 @@ export const _truncate: EffectFn4<string, number | null, () => void, EffectFn1<E
     .then(onSuccess)
     .catch(onError);
 };
+
+export const _uid = (): number | null => {
+  return Deno.uid();
+};

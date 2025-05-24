@@ -79,12 +79,12 @@ chmod path mode = makeAff \cb ->
 foreign import _chown :: EffectFn5 StringOrUrl (Nullable Int) (Nullable Int) (Effect Unit) (EffectFn1 Error Unit) Unit
 
 chown :: forall a. IsStringOrUrl a => a -> Maybe Int -> Maybe Int -> Aff Unit
-chown path uid gid' = makeAff \cb ->
+chown path uid' gid' = makeAff \cb ->
   let
     onSuccess = cb (Right unit)
     onFailure = cb <<< Left
   in
-    runEffectFn5 _chown (toStringOrUrl path) (toNullable uid) (toNullable gid') onSuccess (mkEffectFn1 onFailure) *> mempty
+    runEffectFn5 _chown (toStringOrUrl path) (toNullable uid') (toNullable gid') onSuccess (mkEffectFn1 onFailure) *> mempty
 
 foreign import consoleSize :: Effect { columns :: Int, rows :: Int }
 
@@ -182,3 +182,8 @@ truncate size file = makeAff \cb ->
     size' = toNullable size
   in
     runEffectFn4 _truncate file size' onSuccess (mkEffectFn1 onFailure) *> mempty
+
+foreign import _uid :: Effect (Nullable Int)
+
+uid :: Effect (Maybe Int)
+uid = Nullable.toMaybe <$> _uid
