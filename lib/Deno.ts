@@ -24,3 +24,7 @@ export const _open: EffectFn4<Deno.OpenOptions, string, EffectFn1<Deno.FsFile, v
     .then(onSuccess)
     .catch(onError);
 }
+
+export const _chdir: EffectFn1<string, void> = (path) => {
+  Deno.chdir(path);
+};

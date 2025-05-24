@@ -51,3 +51,8 @@ open opts path = makeAff \cb ->
     onFailure = cb <<< Left
   in
     runEffectFn4 _open opts path (mkEffectFn1 onSuccess) (mkEffectFn1 onFailure) *> mempty
+
+foreign import _chdir :: EffectFn3 String Unit
+
+chdir :: String -> Effect Unit
+chdir path = mkEffectFn1 _chdir path
