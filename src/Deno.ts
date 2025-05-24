@@ -60,3 +60,9 @@ export const _copyFile: EffectFn4<string | URL, string | URL, () => void, Effect
     .then(onSuccess)
     .catch(onError);
 };
+
+export const _create: EffectFn3<string | URL, EffectFn1<Deno.FsFile, void>, EffectFn1<Error, void>, void> = (path, onSuccess, onError) => {
+  Deno.create(path)
+    .then(onSuccess)
+    .catch(onError);
+};

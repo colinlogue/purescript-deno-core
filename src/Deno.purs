@@ -96,3 +96,13 @@ copyFile from to = makeAff \cb ->
     onFailure = cb <<< Left
   in
     runEffectFn4 _copyFile (toStringOrUrl from) (toStringOrUrl to) onSuccess (mkEffectFn1 onFailure) *> mempty
+
+foreign import _create :: EffectFn3 StringOrUrl (EffectFn1 FsFile Unit) (EffectFn1 Error Unit) Unit
+
+create :: forall a. IsStringOrUrl a => a -> Aff FsFile
+create path = makeAff \cb ->
+  let
+    onSuccess = cb <<< Right
+    onFailure = cb <<< Left
+  in
+    runEffectFn3 _create (toStringOrUrl path) (mkEffectFn1 onSuccess) (mkEffectFn1 onFailure) *> mempty
