@@ -1,8 +1,11 @@
 package:
   name: deno-bindings
   dependencies:
+    - aff
     - console
     - effect
+    - either
+    - nullable
     - prelude
   test:
     main: Test.Main

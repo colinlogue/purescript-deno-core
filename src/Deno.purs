@@ -9,7 +9,7 @@ import Deno.OpenOptions (OpenOptions)
 import Deno.WriteFileOptions (WriteFileOptions)
 import Effect (Effect)
 import Effect.Aff (Aff, Error, makeAff)
-import Effect.Uncurried (EffectFn1, EffectFn3, EffectFn4, EffectFn5, mkEffectFn1, runEffectFn3, runEffectFn4, runEffectFn5)
+import Effect.Uncurried (EffectFn1, EffectFn3, EffectFn4, EffectFn5, mkEffectFn1, runEffectFn1, runEffectFn3, runEffectFn4, runEffectFn5)
 
 
 foreign import _mkdir :: EffectFn4 MkdirOptions String (Effect Unit) (EffectFn1 Error Unit) Unit
@@ -52,7 +52,7 @@ open opts path = makeAff \cb ->
   in
     runEffectFn4 _open opts path (mkEffectFn1 onSuccess) (mkEffectFn1 onFailure) *> mempty
 
-foreign import _chdir :: EffectFn3 String Unit
+foreign import _chdir :: EffectFn1 String Unit
 
 chdir :: String -> Effect Unit
-chdir path = mkEffectFn1 _chdir path
+chdir path = runEffectFn1 _chdir path

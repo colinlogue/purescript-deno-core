@@ -9,5 +9,5 @@ generated-docs/
 .purs*
 .psa*
 .spago
-lib/**/*.js
+src/**/*.js
 .vscode
