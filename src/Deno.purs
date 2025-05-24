@@ -106,3 +106,5 @@ create path = makeAff \cb ->
     onFailure = cb <<< Left
   in
     runEffectFn3 _create (toStringOrUrl path) (mkEffectFn1 onSuccess) (mkEffectFn1 onFailure) *> mempty
+
+foreign import cwd :: Effect String

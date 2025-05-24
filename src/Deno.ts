@@ -66,3 +66,7 @@ export const _create: EffectFn3<string | URL, EffectFn1<Deno.FsFile, void>, Effe
     .then(onSuccess)
     .catch(onError);
 };
+
+export const cwd = (): string => {
+  return Deno.cwd();
+};
