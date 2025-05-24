@@ -78,3 +78,7 @@ export const execPath = (): string => {
 export const _gid = (): number | null => {
   return Deno.gid();
 };
+
+export const hostname = (): string => {
+  return Deno.hostname();
+};

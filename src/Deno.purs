@@ -116,3 +116,5 @@ foreign import _gid :: Effect (Nullable Int)
 
 gid :: Effect (Maybe Int)
 gid = Nullable.toMaybe <$> _gid
+
+foreign import hostname :: Effect String
