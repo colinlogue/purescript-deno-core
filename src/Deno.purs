@@ -171,3 +171,14 @@ symlink symlinkType oldPath newPath = makeAff \cb ->
     symlinkType' = toNullable $ symlinkTypeToString <$> symlinkType
   in
     runEffectFn5 _symlink (toStringOrUrl oldPath) (toStringOrUrl newPath) symlinkType' onSuccess (mkEffectFn1 onFailure) *> mempty
+
+foreign import _truncate :: EffectFn4 FsFile (Nullable Int) (Effect Unit) (EffectFn1 Error Unit) Unit
+
+truncate :: Maybe Int -> FsFile -> Aff Unit
+truncate size file = makeAff \cb ->
+  let
+    onSuccess = cb (Right unit)
+    onFailure = cb <<< Left
+    size' = toNullable size
+  in
+    runEffectFn4 _truncate file size' onSuccess (mkEffectFn1 onFailure) *> mempty

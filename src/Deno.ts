@@ -114,3 +114,9 @@ export const _symlink: EffectFn5<string | URL, string | URL, "file" | "dir" | "j
     .then(onSuccess)
     .catch(onError);
 };
+
+export const _truncate: EffectFn4<string, number | null, () => void, EffectFn1<Error, void>, void> = (path, len, onSuccess, onError) => {
+  Deno.truncate(path, len ?? undefined)
+    .then(onSuccess)
+    .catch(onError);
+};
