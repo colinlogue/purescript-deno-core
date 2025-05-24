@@ -7,6 +7,7 @@ package:
     - either
     - nullable
     - prelude
+    - web-url
   test:
     main: Test.Main
     dependencies: []

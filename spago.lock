@@ -10,12 +10,16 @@
             "effect",
             "either",
             "nullable",
-            "prelude"
+            "prelude",
+            "web-url"
           ],
           "build_plan": [
             "aff",
+            "ansi",
             "arrays",
+            "avar",
             "bifunctors",
+            "catenable-lists",
             "console",
             "const",
             "contravariant",
@@ -28,6 +32,8 @@
             "exceptions",
             "exists",
             "foldable-traversable",
+            "fork",
+            "free",
             "functions",
             "functors",
             "gen",
@@ -37,25 +43,31 @@
             "lazy",
             "lists",
             "maybe",
+            "mmorph",
             "newtype",
             "nonempty",
+            "now",
             "nullable",
             "numbers",
             "ordered-collections",
             "orders",
             "parallel",
             "partial",
+            "pipes",
             "prelude",
             "profunctor",
             "refs",
             "safe-coerce",
+            "spec",
             "st",
+            "strings",
             "tailrec",
             "transformers",
             "tuples",
             "type-equality",
             "unfoldable",
-            "unsafe-coerce"
+            "unsafe-coerce",
+            "web-url"
           ]
         },
         "test": {
@@ -632,6 +644,16 @@
         "unsafe-coerce"
       ]
     },
+    "ansi": {
+      "type": "registry",
+      "version": "7.0.0",
+      "integrity": "sha256-ZMB6HD+q9CXvn9fRCmJ8dvuDrOVHcjombL3oNOerVnE=",
+      "dependencies": [
+        "foldable-traversable",
+        "lists",
+        "strings"
+      ]
+    },
     "arrays": {
       "type": "registry",
       "version": "7.3.0",
@@ -653,6 +675,19 @@
         "unsafe-coerce"
       ]
     },
+    "avar": {
+      "type": "registry",
+      "version": "5.0.1",
+      "integrity": "sha256-f+bRR3qQPa/GVe4UbLQiJBy7+PzJkUCwT6qNn0UlkMY=",
+      "dependencies": [
+        "aff",
+        "effect",
+        "either",
+        "exceptions",
+        "functions",
+        "maybe"
+      ]
+    },
     "bifunctors": {
       "type": "registry",
       "version": "6.1.0",
@@ -663,6 +698,20 @@
         "newtype",
         "prelude",
         "tuples"
+      ]
+    },
+    "catenable-lists": {
+      "type": "registry",
+      "version": "7.0.0",
+      "integrity": "sha256-76vYENhwF4BWTBsjeLuErCH2jqVT4M3R1HX+4RwSftA=",
+      "dependencies": [
+        "control",
+        "foldable-traversable",
+        "lists",
+        "maybe",
+        "prelude",
+        "tuples",
+        "unfoldable"
       ]
     },
     "console": {
@@ -813,6 +862,35 @@
         "tuples"
       ]
     },
+    "fork": {
+      "type": "registry",
+      "version": "6.0.0",
+      "integrity": "sha256-X7u0SuCvFbLbzuNEKLBNuWjmcroqMqit4xEzpQwAP7E=",
+      "dependencies": [
+        "aff"
+      ]
+    },
+    "free": {
+      "type": "registry",
+      "version": "7.1.0",
+      "integrity": "sha256-JAumgEsGSzJCNLD8AaFvuX7CpqS5yruCngi6yI7+V5k=",
+      "dependencies": [
+        "catenable-lists",
+        "control",
+        "distributive",
+        "either",
+        "exists",
+        "foldable-traversable",
+        "invariant",
+        "lazy",
+        "maybe",
+        "prelude",
+        "tailrec",
+        "transformers",
+        "tuples",
+        "unsafe-coerce"
+      ]
+    },
     "functions": {
       "type": "registry",
       "version": "6.0.0",
@@ -929,6 +1007,16 @@
         "prelude"
       ]
     },
+    "mmorph": {
+      "type": "registry",
+      "version": "7.0.0",
+      "integrity": "sha256-urZlZNNqGeQFe5D/ClHlR8QgGBNHTMFPtJ5S5IpflTQ=",
+      "dependencies": [
+        "free",
+        "functors",
+        "transformers"
+      ]
+    },
     "newtype": {
       "type": "registry",
       "version": "5.0.0",
@@ -949,6 +1037,15 @@
         "prelude",
         "tuples",
         "unfoldable"
+      ]
+    },
+    "now": {
+      "type": "registry",
+      "version": "6.0.0",
+      "integrity": "sha256-xZ7x37ZMREfs6GCDw/h+FaKHV/3sPWmtqBZRGTxybQY=",
+      "dependencies": [
+        "datetime",
+        "effect"
       ]
     },
     "nullable": {
@@ -1021,6 +1118,20 @@
       "integrity": "sha256-fwXerld6Xw1VkReh8yeQsdtLVrjfGiVuC5bA1Wyo/J4=",
       "dependencies": []
     },
+    "pipes": {
+      "type": "registry",
+      "version": "8.0.0",
+      "integrity": "sha256-kvfqGM4cPA/wCcBHbp5psouFw5dZGvku2462x7ZBwSY=",
+      "dependencies": [
+        "aff",
+        "lists",
+        "mmorph",
+        "prelude",
+        "tailrec",
+        "transformers",
+        "tuples"
+      ]
+    },
     "prelude": {
       "type": "registry",
       "version": "6.0.2",
@@ -1059,6 +1170,40 @@
         "unsafe-coerce"
       ]
     },
+    "spec": {
+      "type": "registry",
+      "version": "8.1.1",
+      "integrity": "sha256-EM7UfQIaSgiw13LJ4ZASkfYmmRDKIlec3nYbGKFqGhk=",
+      "dependencies": [
+        "aff",
+        "ansi",
+        "arrays",
+        "avar",
+        "bifunctors",
+        "control",
+        "datetime",
+        "effect",
+        "either",
+        "exceptions",
+        "foldable-traversable",
+        "fork",
+        "identity",
+        "integers",
+        "lists",
+        "maybe",
+        "newtype",
+        "now",
+        "ordered-collections",
+        "parallel",
+        "pipes",
+        "prelude",
+        "refs",
+        "strings",
+        "tailrec",
+        "transformers",
+        "tuples"
+      ]
+    },
     "st": {
       "type": "registry",
       "version": "6.2.0",
@@ -1067,6 +1212,29 @@
         "partial",
         "prelude",
         "tailrec",
+        "unsafe-coerce"
+      ]
+    },
+    "strings": {
+      "type": "registry",
+      "version": "6.0.1",
+      "integrity": "sha256-WssD3DbX4OPzxSdjvRMX0yvc9+pS7n5gyPv5I2Trb7k=",
+      "dependencies": [
+        "arrays",
+        "control",
+        "either",
+        "enums",
+        "foldable-traversable",
+        "gen",
+        "integers",
+        "maybe",
+        "newtype",
+        "nonempty",
+        "partial",
+        "prelude",
+        "tailrec",
+        "tuples",
+        "unfoldable",
         "unsafe-coerce"
       ]
     },
@@ -1140,6 +1308,20 @@
       "version": "6.0.0",
       "integrity": "sha256-IqIYW4Vkevn8sI+6aUwRGvd87tVL36BBeOr0cGAE7t0=",
       "dependencies": []
+    },
+    "web-url": {
+      "type": "registry",
+      "version": "2.0.0",
+      "integrity": "sha256-isicTqg0+JZmIK+eD3kwQroOocufYDGZVNIx/wFw488=",
+      "dependencies": [
+        "aff",
+        "effect",
+        "maybe",
+        "partial",
+        "prelude",
+        "spec",
+        "tuples"
+      ]
     }
   }
 }
