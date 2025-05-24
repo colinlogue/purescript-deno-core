@@ -4,6 +4,8 @@ import Prelude
 
 import Data.Either (Either(..))
 import Data.IsStringOrUrl (class IsStringOrUrl, StringOrUrl, toStringOrUrl)
+import Data.Maybe (Maybe, maybe)
+import Data.Nullable (Nullable, toNullable)
 import Deno.FsFile (FsFile)
 import Deno.MkdirOptions (MkdirOptions)
 import Deno.OpenOptions (OpenOptions)
@@ -72,3 +74,13 @@ chmod path mode = makeAff \cb ->
     onFailure = cb <<< Left
   in
     runEffectFn4 _chmod (toStringOrUrl path) mode onSuccess (mkEffectFn1 onFailure) *> mempty
+
+foreign import _chown :: EffectFn5 StringOrUrl (Nullable Int) (Nullable Int) (Effect Unit) (EffectFn1 Error Unit) Unit
+
+chown :: forall a. IsStringOrUrl a => a -> Maybe Int -> Maybe Int -> Aff Unit
+chown path uid gid = makeAff \cb ->
+  let
+    onSuccess = cb (Right unit)
+    onFailure = cb <<< Left
+  in
+    runEffectFn5 _chown (toStringOrUrl path) (toNullable uid) (toNullable gid) onSuccess (mkEffectFn1 onFailure) *> mempty

@@ -38,3 +38,15 @@ export const _chmod: EffectFn4<string | URL, number, () => void, EffectFn1<Error
     .then(onSuccess)
     .catch(onError);
 };
+
+export const _chown: EffectFn5<string | URL, number | null, number | null, () => void, EffectFn1<Error, void>, void> = (
+  path,
+  uid,
+  gid,
+  onSuccess,
+  onError
+) => {
+  Deno.chown(path, uid, gid)
+    .then(onSuccess)
+    .catch(onError);
+};
