@@ -192,3 +192,8 @@ foreign import _umask :: EffectFn1 (Nullable Int) Int
 
 umask :: Maybe Int -> Effect Int
 umask mask = runEffectFn1 _umask (toNullable mask)
+
+foreign import _unrefTimer :: EffectFn1 Int Unit
+
+unrefTimer :: Int -> Effect Unit
+unrefTimer timerId = runEffectFn1 _unrefTimer timerId

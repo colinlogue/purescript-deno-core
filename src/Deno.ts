@@ -128,3 +128,7 @@ export const _uid = (): number | null => {
 export const _umask: EffectFn1<number | null, number> = (mask) => {
   return Deno.umask(mask ?? undefined);
 };
+
+export const _unrefTimer: EffectFn1<number, void> = (timerId) => {
+  Deno.unrefTimer(timerId);
+};
