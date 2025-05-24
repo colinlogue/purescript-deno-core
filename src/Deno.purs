@@ -118,3 +118,13 @@ gid :: Effect (Maybe Int)
 gid = Nullable.toMaybe <$> _gid
 
 foreign import hostname :: Effect String
+
+foreign import _link :: EffectFn4 String String (Effect Unit) (EffectFn1 Error Unit) Unit
+
+link :: String -> String -> Aff Unit
+link oldPath newPath = makeAff \cb ->
+  let
+    onSuccess = cb (Right unit)
+    onFailure = cb <<< Left
+  in
+    runEffectFn4 _link oldPath newPath onSuccess (mkEffectFn1 onFailure) *> mempty

@@ -82,3 +82,9 @@ export const _gid = (): number | null => {
 export const hostname = (): string => {
   return Deno.hostname();
 };
+
+export const _link: EffectFn4<string, string, () => void, EffectFn1<Error, void>, void> = (oldPath, newPath, onSuccess, onError) => {
+  Deno.link(oldPath, newPath)
+    .then(onSuccess)
+    .catch(onError);
+};
