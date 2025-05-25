@@ -1,4 +1,4 @@
-module Deno.Signal
+module Deno.Runtime.Signal
   ( Signal(..)
   ) where
 

@@ -5,7 +5,7 @@ import Prelude
 import Data.ArrayBuffer.Types (Uint8Array)
 import Data.Maybe (Maybe(..))
 import Data.String as String
-import Deno.Signal (Signal(..))
+import Deno.Runtime.Signal (Signal(..))
 import Deno.Subprocess.ChildProcess as ChildProcess
 import Deno.Subprocess.Command as Command
 import Deno.Subprocess.CommandOptions as CommandOptions
