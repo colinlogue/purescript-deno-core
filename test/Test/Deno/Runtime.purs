@@ -4,9 +4,11 @@ import Prelude
 
 import Data.String as String
 import Deno (consoleSize) as Deno
-import Deno.Runtime (chdir, cwd, execPath) as Deno
+import Deno.Runtime (chdir, cwd, execPath, addSignalListener, removeSignalListener) as Deno
+import Deno.Runtime.Signal (Signal(..))
 import Effect (Effect)
 import Effect.Class (liftEffect)
+import Effect.Ref as Ref
 import Test.Spec (Spec, describe, it)
 import Test.Spec.Assertions (shouldSatisfy, shouldEqual, shouldNotEqual)
 
@@ -42,3 +44,15 @@ spec = do
         liftEffect $ Deno.chdir originalCwd
         finalCwd <- liftEffect Deno.cwd
         finalCwd `shouldEqual` originalCwd
+
+    describe "Signal handling" do
+      it "should handle SIGINT signal listener" do
+        -- Test adding and removing SIGINT listener (supported on all platforms)
+        handlerCalled <- liftEffect $ Ref.new false
+
+        let handler = Ref.write true handlerCalled
+
+        liftEffect $ Deno.addSignalListener SIGINT handler
+        liftEffect $ Deno.removeSignalListener SIGINT handler
+
+        pure unit

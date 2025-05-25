@@ -1,4 +1,4 @@
-import type { EffectFn1 } from "../purescript.d.ts";
+import type { EffectFn1, EffectFn2 } from "../purescript.d.ts";
 
 export const _chdir: EffectFn1<string | URL, void> = (path) => {
   Deno.chdir(path);
@@ -38,4 +38,12 @@ export const _uid = (): number | null => {
 
 export const _unrefTimer: EffectFn1<number, void> = (timerId) => {
   Deno.unrefTimer(timerId);
+};
+
+export const _addSignalListener: EffectFn2<string, () => void, void> = (signal, handler) => {
+  Deno.addSignalListener(signal as Deno.Signal, handler);
+};
+
+export const _removeSignalListener: EffectFn2<string, () => void, void> = (signal, handler) => {
+  Deno.removeSignalListener(signal as Deno.Signal, handler);
 };

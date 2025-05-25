@@ -9,6 +9,8 @@ module Deno.Runtime
   , osUptime
   , uid
   , unrefTimer
+  , addSignalListener
+  , removeSignalListener
   ) where
 
 import Prelude
@@ -17,8 +19,9 @@ import Data.IsStringOrUrl (class IsStringOrUrl, StringOrUrl, toStringOrUrl)
 import Data.Maybe (Maybe)
 import Data.Nullable (Nullable)
 import Data.Nullable as Nullable
+import Deno.Runtime.Signal (Signal)
 import Effect (Effect)
-import Effect.Uncurried (EffectFn1, runEffectFn1)
+import Effect.Uncurried (EffectFn1, EffectFn2, runEffectFn1, runEffectFn2)
 
 foreign import _chdir :: EffectFn1 StringOrUrl Unit
 
@@ -54,3 +57,13 @@ foreign import _unrefTimer :: EffectFn1 Int Unit
 
 unrefTimer :: Int -> Effect Unit
 unrefTimer timerId = runEffectFn1 _unrefTimer timerId
+
+foreign import _addSignalListener :: EffectFn2 String (Effect Unit) Unit
+
+addSignalListener :: Signal -> Effect Unit -> Effect Unit
+addSignalListener signal handler = runEffectFn2 _addSignalListener (show signal) handler
+
+foreign import _removeSignalListener :: EffectFn2 String (Effect Unit) Unit
+
+removeSignalListener :: Signal -> Effect Unit -> Effect Unit
+removeSignalListener signal handler = runEffectFn2 _removeSignalListener (show signal) handler
