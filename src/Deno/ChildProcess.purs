@@ -1,12 +1,14 @@
 module Deno.ChildProcess
   ( ChildProcess
   , CommandStatus
+  , CommandOutput
   , pid
   , status
   , stdin
   , stdout
   , stderr
   , kill
+  , output
   ) where
 
 import Prelude
@@ -31,10 +33,26 @@ type CommandStatus =
   , signal :: Maybe Signal
   }
 
+type CommandOutput =
+  { success :: Boolean
+  , code :: Int
+  , signal :: Maybe Signal
+  , stdout :: Uint8Array
+  , stderr :: Uint8Array
+  }
+
 type CommandStatusRaw =
   { success :: Boolean
   , code :: Int
   , signal :: Nullable String
+  }
+
+type CommandOutputRaw =
+  { success :: Boolean
+  , code :: Int
+  , signal :: Nullable String
+  , stdout :: Uint8Array
+  , stderr :: Uint8Array
   }
 
 foreign import pid :: ChildProcess -> Int
@@ -46,6 +64,8 @@ foreign import _stderr :: EffectFn1 ChildProcess (ReadableStream Uint8Array)
 foreign import _status :: EffectFn3 ChildProcess (EffectFn1 CommandStatusRaw Unit) (EffectFn1 Error Unit) Unit
 
 foreign import _kill :: EffectFn2 (Nullable String) ChildProcess Unit
+
+foreign import _output :: EffectFn3 ChildProcess (EffectFn1 CommandOutputRaw Unit) (EffectFn1 Error Unit) Unit
 
 signalToString :: Signal -> String
 signalToString = case _ of
@@ -133,6 +153,15 @@ convertCommandStatus raw =
   , signal: toMaybe raw.signal >>= stringToSignal
   }
 
+convertCommandOutput :: CommandOutputRaw -> CommandOutput
+convertCommandOutput raw =
+  { success: raw.success
+  , code: raw.code
+  , signal: toMaybe raw.signal >>= stringToSignal
+  , stdout: raw.stdout
+  , stderr: raw.stderr
+  }
+
 status :: ChildProcess -> Aff CommandStatus
 status childProcess = makeAff \cb ->
   let
@@ -154,3 +183,11 @@ kill :: Maybe Signal -> ChildProcess -> Effect Unit
 kill maybeSignal childProcess =
   let signalString = maybe Nothing (Just <<< signalToString) maybeSignal
   in runEffectFn2 _kill (toNullable signalString) childProcess
+
+output :: ChildProcess -> Aff CommandOutput
+output childProcess = makeAff \cb ->
+  let
+    onSuccess = cb <<< Right <<< convertCommandOutput
+    onError = cb <<< Left
+  in
+    runEffectFn3 _output childProcess (mkEffectFn1 onSuccess) (mkEffectFn1 onError) *> mempty

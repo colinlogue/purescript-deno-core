@@ -7,7 +7,7 @@ export const pid = (childProcess: Deno.ChildProcess): number => {
 
 export const _status: EffectFn3<
   Deno.ChildProcess,
-  EffectFn1<{ success: boolean; code: number; signal: string | null }, void>,
+  EffectFn1<Deno.CommandStatus, void>,
   EffectFn1<Error, void>,
   void
 > = (childProcess, onSuccess, onError) => {
@@ -34,4 +34,15 @@ export const _kill = (signal: Deno.Signal | null, childProcess: Deno.ChildProces
   } else {
     childProcess.kill();
   }
+};
+
+export const _output: EffectFn3<
+  Deno.ChildProcess,
+  EffectFn1<Deno.CommandOutput, void>,
+  EffectFn1<Error, void>,
+  void
+> = (childProcess, onSuccess, onError) => {
+  childProcess.output()
+    .then(onSuccess)
+    .catch(onError);
 };

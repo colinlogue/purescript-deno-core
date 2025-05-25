@@ -403,3 +403,37 @@ spec = do
         status.success `shouldEqual` false
         -- SIGKILL should be reported in the signal field
         status.signal `shouldSatisfy` (_ == Just SIGKILL)
+
+      it "should get output from a child process using output method" do
+        let opts = CommandOptions.stdout CommandOptions.Piped
+                <> CommandOptions.stderr CommandOptions.Piped
+                <> CommandOptions.args ["hello world"]
+        cmd <- liftEffect $ Command.new opts "echo"
+        childProcess <- liftEffect $ Command.spawn cmd
+
+        -- Get the output using the output method
+        result <- ChildProcess.output childProcess
+
+        -- Check the output
+        let stdoutText = decodeText result.stdout
+        stdoutText `shouldSatisfy` String.contains (String.Pattern "hello world")
+        result.success `shouldEqual` true
+        result.code `shouldEqual` 0
+        result.signal `shouldEqual` Nothing
+
+      it "should capture stderr in output method" do
+        let opts = CommandOptions.stdout CommandOptions.Piped
+                <> CommandOptions.stderr CommandOptions.Piped
+                <> CommandOptions.args ["-c", "echo 'error message' >&2; exit 1"]
+        cmd <- liftEffect $ Command.new opts "sh"
+        childProcess <- liftEffect $ Command.spawn cmd
+
+        -- Get the output using the output method
+        result <- ChildProcess.output childProcess
+
+        -- Check stderr output and exit code
+        let stderrText = decodeText result.stderr
+        stderrText `shouldSatisfy` String.contains (String.Pattern "error message")
+        result.success `shouldEqual` false
+        result.code `shouldEqual` 1
+        result.signal `shouldEqual` Nothing
