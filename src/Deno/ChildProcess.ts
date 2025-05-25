@@ -27,3 +27,11 @@ export const _stdout = (childProcess: Deno.ChildProcess): ReadableStream<Uint8Ar
 export const _stderr = (childProcess: Deno.ChildProcess): ReadableStream<Uint8Array> => {
   return childProcess.stderr;
 };
+
+export const _kill = (signal: Deno.Signal | null, childProcess: Deno.ChildProcess): void => {
+  if (signal) {
+    childProcess.kill(signal);
+  } else {
+    childProcess.kill();
+  }
+};

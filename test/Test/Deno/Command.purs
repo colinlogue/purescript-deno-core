@@ -8,6 +8,7 @@ import Data.String as String
 import Deno.ChildProcess as ChildProcess
 import Deno.Command as Command
 import Deno.CommandOptions as CommandOptions
+import Deno.Signal (Signal(..))
 import Effect (Effect)
 import Effect.Class (liftEffect)
 import Test.Spec (Spec, describe, it)
@@ -347,3 +348,58 @@ spec = do
         -- Wait for it to complete
         status <- ChildProcess.status childProcess
         status.success `shouldEqual` true
+
+      it "should kill a child process without a signal" do
+        let opts = CommandOptions.stdout CommandOptions.Piped
+                <> CommandOptions.stderr CommandOptions.Piped
+                <> CommandOptions.args ["-c", "sleep 10"]  -- Long running command
+        cmd <- liftEffect $ Command.new opts "sh"
+        childProcess <- liftEffect $ Command.spawn cmd
+
+        let pid = ChildProcess.pid childProcess
+        pid `shouldSatisfy` (_ > 0)
+
+        -- Kill the process without specifying a signal
+        void $ liftEffect $ ChildProcess.kill Nothing childProcess
+
+        -- Wait for it to exit
+        status <- ChildProcess.status childProcess
+        status.success `shouldEqual` false
+
+      it "should kill a child process with SIGTERM signal" do
+        let opts = CommandOptions.stdout CommandOptions.Piped
+                <> CommandOptions.stderr CommandOptions.Piped
+                <> CommandOptions.args ["-c", "sleep 10"]  -- Long running command
+        cmd <- liftEffect $ Command.new opts "sh"
+        childProcess <- liftEffect $ Command.spawn cmd
+
+        let pid = ChildProcess.pid childProcess
+        pid `shouldSatisfy` (_ > 0)
+
+        -- Kill the process with SIGTERM
+        void $ liftEffect $ ChildProcess.kill (Just SIGTERM) childProcess
+
+        -- Wait for it to exit
+        status <- ChildProcess.status childProcess
+        status.success `shouldEqual` false
+        -- On Unix systems, SIGTERM should be reported in the signal field
+        status.signal `shouldSatisfy` (_ == Just SIGTERM)
+
+      it "should kill a child process with SIGKILL signal" do
+        let opts = CommandOptions.stdout CommandOptions.Piped
+                <> CommandOptions.stderr CommandOptions.Piped
+                <> CommandOptions.args ["-c", "sleep 10"]  -- Long running command
+        cmd <- liftEffect $ Command.new opts "sh"
+        childProcess <- liftEffect $ Command.spawn cmd
+
+        let pid = ChildProcess.pid childProcess
+        pid `shouldSatisfy` (_ > 0)
+
+        -- Kill the process with SIGKILL
+        void $ liftEffect $ ChildProcess.kill (Just SIGKILL) childProcess
+
+        -- Wait for it to exit
+        status <- ChildProcess.status childProcess
+        status.success `shouldEqual` false
+        -- SIGKILL should be reported in the signal field
+        status.signal `shouldSatisfy` (_ == Just SIGKILL)

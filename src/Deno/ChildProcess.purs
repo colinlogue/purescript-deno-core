@@ -6,19 +6,20 @@ module Deno.ChildProcess
   , stdin
   , stdout
   , stderr
+  , kill
   ) where
 
 import Prelude
 
 import Data.ArrayBuffer.Types (Uint8Array)
 import Data.Either (Either(..))
-import Data.Maybe (Maybe(..))
-import Data.Nullable (Nullable, toMaybe)
+import Data.Maybe (Maybe(..), maybe)
+import Data.Nullable (Nullable, toMaybe, toNullable)
 import Deno.Signal (Signal(..))
 import Effect (Effect)
 import Effect.Aff (Aff, makeAff)
 import Effect.Exception (Error)
-import Effect.Uncurried (EffectFn1, EffectFn3, mkEffectFn1, runEffectFn1, runEffectFn3)
+import Effect.Uncurried (EffectFn1, EffectFn2, EffectFn3, mkEffectFn1, runEffectFn1, runEffectFn2, runEffectFn3)
 import Web.Streams.ReadableStream (ReadableStream)
 import Web.Streams.WritableStream (WritableStream)
 
@@ -43,6 +44,47 @@ foreign import _stdout :: EffectFn1 ChildProcess (ReadableStream Uint8Array)
 foreign import _stderr :: EffectFn1 ChildProcess (ReadableStream Uint8Array)
 
 foreign import _status :: EffectFn3 ChildProcess (EffectFn1 CommandStatusRaw Unit) (EffectFn1 Error Unit) Unit
+
+foreign import _kill :: EffectFn2 (Nullable String) ChildProcess Unit
+
+signalToString :: Signal -> String
+signalToString = case _ of
+  SIGABRT -> "SIGABRT"
+  SIGALRM -> "SIGALRM"
+  SIGBREAK -> "SIGBREAK"
+  SIGBUS -> "SIGBUS"
+  SIGCHLD -> "SIGCHLD"
+  SIGCONT -> "SIGCONT"
+  SIGEMT -> "SIGEMT"
+  SIGFPE -> "SIGFPE"
+  SIGHUP -> "SIGHUP"
+  SIGILL -> "SIGILL"
+  SIGINFO -> "SIGINFO"
+  SIGINT -> "SIGINT"
+  SIGIO -> "SIGIO"
+  SIGPOLL -> "SIGPOLL"
+  SIGUNUSED -> "SIGUNUSED"
+  SIGKILL -> "SIGKILL"
+  SIGPIPE -> "SIGPIPE"
+  SIGPROF -> "SIGPROF"
+  SIGPWR -> "SIGPWR"
+  SIGQUIT -> "SIGQUIT"
+  SIGSEGV -> "SIGSEGV"
+  SIGSTKFLT -> "SIGSTKFLT"
+  SIGSTOP -> "SIGSTOP"
+  SIGSYS -> "SIGSYS"
+  SIGTERM -> "SIGTERM"
+  SIGTRAP -> "SIGTRAP"
+  SIGTSTP -> "SIGTSTP"
+  SIGTTIN -> "SIGTTIN"
+  SIGTTOU -> "SIGTTOU"
+  SIGURG -> "SIGURG"
+  SIGUSR1 -> "SIGUSR1"
+  SIGUSR2 -> "SIGUSR2"
+  SIGVTALRM -> "SIGVTALRM"
+  SIGWINCH -> "SIGWINCH"
+  SIGXCPU -> "SIGXCPU"
+  SIGXFSZ -> "SIGXFSZ"
 
 stringToSignal :: String -> Maybe Signal
 stringToSignal = case _ of
@@ -107,3 +149,8 @@ stdout = runEffectFn1 _stdout
 
 stderr :: ChildProcess -> Effect (ReadableStream Uint8Array)
 stderr = runEffectFn1 _stderr
+
+kill :: Maybe Signal -> ChildProcess -> Effect Unit
+kill maybeSignal childProcess =
+  let signalString = maybe Nothing (Just <<< signalToString) maybeSignal
+  in runEffectFn2 _kill (toNullable signalString) childProcess
