@@ -1,5 +1,5 @@
 // TypeScript foreign function implementations for Deno.ChildProcess
-import type { EffectFn1, EffectFn3 } from "../purescript.d.ts";
+import type { EffectFn1, EffectFn3 } from "../../purescript.d.ts";
 
 export const pid = (childProcess: Deno.ChildProcess): number => {
   return childProcess.pid;

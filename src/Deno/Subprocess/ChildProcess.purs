@@ -1,4 +1,4 @@
-module Deno.ChildProcess
+module Deno.Subprocess.ChildProcess
   ( ChildProcess
   , CommandStatus
   , CommandOutput

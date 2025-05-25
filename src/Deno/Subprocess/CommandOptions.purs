@@ -1,4 +1,4 @@
-module Deno.CommandOptions
+module Deno.Subprocess.CommandOptions
   ( CommandOptions
   , StdioOption(..)
   , class IsCommandEnv
@@ -22,7 +22,6 @@ import Data.IsStringOrUrl (class IsStringOrUrl, StringOrUrl, toStringOrUrl)
 import JS.Fetch.AbortController (AbortSignal)
 import Prim.RowList (class RowToList, RowList)
 import Prim.RowList as RowList
-import Type.RowList (class ListToRow)
 import Unsafe.Coerce (unsafeCoerce)
 
 

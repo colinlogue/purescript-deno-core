@@ -1,4 +1,4 @@
-module Deno.Command
+module Deno.Subprocess.Command
   ( Command
   , new
   , output
@@ -10,8 +10,8 @@ import Prelude
 
 import Data.Either (Either(..))
 import Data.IsStringOrUrl (class IsStringOrUrl, StringOrUrl, toStringOrUrl)
-import Deno.ChildProcess (ChildProcess, CommandOutput)
-import Deno.CommandOptions (CommandOptions)
+import Deno.Subprocess.ChildProcess (ChildProcess, CommandOutput)
+import Deno.Subprocess.CommandOptions (CommandOptions)
 import Effect (Effect)
 import Effect.Aff (Aff, makeAff)
 import Effect.Exception (Error)

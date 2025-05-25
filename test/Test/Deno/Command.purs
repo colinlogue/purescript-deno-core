@@ -5,10 +5,10 @@ import Prelude
 import Data.ArrayBuffer.Types (Uint8Array)
 import Data.Maybe (Maybe(..))
 import Data.String as String
-import Deno.ChildProcess as ChildProcess
-import Deno.Command as Command
-import Deno.CommandOptions as CommandOptions
 import Deno.Signal (Signal(..))
+import Deno.Subprocess.ChildProcess as ChildProcess
+import Deno.Subprocess.Command as Command
+import Deno.Subprocess.CommandOptions as CommandOptions
 import Effect (Effect)
 import Effect.Class (liftEffect)
 import Test.Spec (Spec, describe, it)
