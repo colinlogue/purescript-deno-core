@@ -25,8 +25,32 @@ spec = do
         isTerminal <- liftEffect $ FsFile.isTerminal file
         isTerminal `shouldEqual` false
 
-        -- Unlock the file
+        -- Unlock the file using unlockSync
+        liftEffect $ FsFile.unlockSync file
+
+        -- Close the file
+        liftEffect $ FsFile.close file
+
+        -- Clean up
+        Deno.remove false testFile
+
+      it "should lock and unlock file using both sync and async methods" do
+        let testFile = "/tmp/test-fsfile-mixed-lock.txt"
+
+        -- Create file
+        file <- Deno.create testFile
+
+        -- Test lockSync with exclusive lock
+        liftEffect $ FsFile.lockSync true file
+
+        -- Unlock using async unlock
         FsFile.unlock file
+
+        -- Lock again with async lock
+        FsFile.lock true file
+
+        -- Unlock using unlockSync
+        liftEffect $ FsFile.unlockSync file
 
         -- Close the file
         liftEffect $ FsFile.close file

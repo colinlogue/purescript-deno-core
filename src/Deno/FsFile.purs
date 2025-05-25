@@ -14,6 +14,7 @@ module Deno.FsFile
   , sync
   , truncate
   , unlock
+  , unlockSync
   ) where
 
 import Prelude
@@ -118,3 +119,8 @@ unlock file = makeAff \cb ->
     onFailure = cb <<< Left
   in
     runEffectFn3 _unlock file onSuccess (mkEffectFn1 onFailure) *> mempty
+
+foreign import _unlockSync :: EffectFn1 FsFile Unit
+
+unlockSync :: FsFile -> Effect Unit
+unlockSync = runEffectFn1 _unlockSync

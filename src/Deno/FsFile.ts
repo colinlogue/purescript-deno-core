@@ -83,6 +83,10 @@ export const _unlock: EffectFn3<
     .catch(onError);
 };
 
+export const _unlockSync: EffectFn1<Deno.FsFile, void> = (file) => {
+  file.unlockSync();
+};
+
 export const _readable: EffectFn1<Deno.FsFile, ReadableStream<Uint8Array>> = (file) => {
   return file.readable;
 };
