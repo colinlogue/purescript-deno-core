@@ -29,6 +29,10 @@ export const _loadavg: EffectFn1<(min1: number) => (min5: number) => (min15: num
   return constructor(min1)(min5)(min15);
 };
 
+export const _memoryUsage = () => {
+  return Deno.memoryUsage();
+};
+
 export const osRelease = (): string => {
   return Deno.osRelease();
 };

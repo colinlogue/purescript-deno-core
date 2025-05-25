@@ -4,7 +4,7 @@ import Prelude
 
 import Data.String as String
 import Deno (consoleSize) as Deno
-import Deno.Runtime (chdir, cwd, execPath, loadavg, addSignalListener, removeSignalListener, LoadAvgResult(..)) as Deno
+import Deno.Runtime (chdir, cwd, execPath, loadavg, memoryUsage, addSignalListener, removeSignalListener, LoadAvgResult(..)) as Deno
 import Deno.Runtime.Signal (Signal(..))
 import Effect (Effect)
 import Effect.Class (liftEffect)
@@ -39,6 +39,16 @@ spec = do
         min1 `shouldSatisfy` (_ >= 0.0)
         min5 `shouldSatisfy` (_ >= 0.0)
         min15 `shouldSatisfy` (_ >= 0.0)
+
+      it "should get memory usage information" do
+        usage <- liftEffect Deno.memoryUsage
+        -- Memory usage values should be non-negative numbers
+        usage.rss `shouldSatisfy` (_ >= 0.0)
+        usage.heapTotal `shouldSatisfy` (_ >= 0.0)
+        usage.heapUsed `shouldSatisfy` (_ >= 0.0)
+        usage.external `shouldSatisfy` (_ >= 0.0)
+        -- heapUsed should not exceed heapTotal
+        usage.heapUsed `shouldSatisfy` (_ <= usage.heapTotal)
 
     describe "Directory operations" do
       it "should change working directory" do

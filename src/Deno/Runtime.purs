@@ -7,6 +7,7 @@ module Deno.Runtime
   , hostname
   , loadavg
   , LoadAvgResult(..)
+  , memoryUsage
   , osRelease
   , osUptime
   , uid
@@ -34,6 +35,13 @@ instance Show LoadAvgResult where
   show (LoadAvgResult min1 min5 min15) = 
     "LoadAvgResult " <> show min1 <> " " <> show min5 <> " " <> show min15
 
+type MemoryUsageResult = 
+  { rss :: Number
+  , heapTotal :: Number  
+  , heapUsed :: Number
+  , external :: Number
+  }
+
 foreign import _chdir :: EffectFn1 StringOrUrl Unit
 
 chdir :: forall a. IsStringOrUrl a => a -> Effect Unit
@@ -59,6 +67,11 @@ foreign import _loadavg :: EffectFn1 (Number -> Number -> Number -> LoadAvgResul
 
 loadavg :: Effect LoadAvgResult
 loadavg = runEffectFn1 _loadavg LoadAvgResult
+
+foreign import _memoryUsage :: Effect MemoryUsageResult
+
+memoryUsage :: Effect MemoryUsageResult
+memoryUsage = _memoryUsage
 
 foreign import osRelease :: Effect String
 
