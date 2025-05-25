@@ -17,6 +17,19 @@ module Deno.Runtime
   , unrefTimer
   , addSignalListener
   , removeSignalListener
+  -- Variables
+  , args
+  , build
+  , BuildInfo
+  , env
+  , exitCode
+  , setExitCode
+  , mainModule
+  , noColor
+  , pid
+  , ppid
+  , version
+  , VersionInfo
   ) where
 
 import Prelude
@@ -25,6 +38,7 @@ import Data.IsStringOrUrl (class IsStringOrUrl, StringOrUrl, toStringOrUrl)
 import Data.Maybe (Maybe)
 import Data.Nullable (Nullable)
 import Data.Nullable as Nullable
+import Deno.Runtime.Env (Env)
 import Deno.Runtime.Signal (Signal)
 import Effect (Effect)
 import Effect.Uncurried (EffectFn1, EffectFn2, runEffectFn1, runEffectFn2)
@@ -53,6 +67,21 @@ type SystemMemoryInfoResult =
   , cached :: Number
   , swapTotal :: Number
   , swapFree :: Number
+  }
+
+type BuildInfo =
+  { target :: String
+  , arch :: String
+  , os :: String
+  , vendor :: String
+  , env :: Maybe String
+  , standalone :: Boolean
+  }
+
+type VersionInfo =
+  { deno :: String
+  , v8 :: String
+  , typescript :: String
   }
 
 foreign import _chdir :: EffectFn1 StringOrUrl Unit
@@ -119,3 +148,29 @@ foreign import _removeSignalListener :: EffectFn2 String (Effect Unit) Unit
 
 removeSignalListener :: Signal -> Effect Unit -> Effect Unit
 removeSignalListener signal handler = runEffectFn2 _removeSignalListener (show signal) handler
+
+-- Variables
+foreign import args :: Array String
+
+foreign import build :: BuildInfo
+
+foreign import env :: Env
+
+foreign import _getExitCode :: Effect Int
+foreign import _setExitCode :: EffectFn1 Int Unit
+
+exitCode :: Effect Int
+exitCode = _getExitCode
+
+setExitCode :: Int -> Effect Unit
+setExitCode code = runEffectFn1 _setExitCode code
+
+foreign import mainModule :: String
+
+foreign import noColor :: Boolean
+
+foreign import pid :: Int
+
+foreign import ppid :: Int
+
+foreign import version :: VersionInfo

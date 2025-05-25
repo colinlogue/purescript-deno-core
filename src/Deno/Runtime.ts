@@ -64,3 +64,28 @@ export const _addSignalListener: EffectFn2<string, () => void, void> = (signal, 
 export const _removeSignalListener: EffectFn2<string, () => void, void> = (signal, handler) => {
   Deno.removeSignalListener(signal as Deno.Signal, handler);
 };
+
+// Variables
+export const args = Deno.args;
+
+export const build = Deno.build;
+
+export const env = Deno.env;
+
+export const _getExitCode = (): number => {
+  return Deno.exitCode;
+};
+
+export const _setExitCode: EffectFn1<number, void> = (code) => {
+  Deno.exitCode = code;
+};
+
+export const mainModule = Deno.mainModule;
+
+export const noColor = Deno.noColor;
+
+export const pid = Deno.pid;
+
+export const ppid = Deno.ppid;
+
+export const version = Deno.version;
