@@ -245,3 +245,157 @@ spec = do
 
         -- Clean up
         Deno.remove false testFile
+
+    describe "ReadSync operations" do
+      it "should read data from file synchronously into Uint8Array buffer" do
+        let testFile = "/tmp/test-fsfile-readsync.txt"
+        let testContent = "Hello from readSync test!"
+
+        -- Create and write to file first
+        Deno.writeTextFile mempty testFile testContent
+
+        -- Open file for reading
+        file <- Deno.open (OpenOptions.read true) testFile
+
+        -- Create a buffer to read into (enough space for our content)
+        buffer <- liftEffect $ Typed.empty 30 -- Create 30-byte buffer
+
+        -- Read from file synchronously
+        bytesRead <- liftEffect $ FsFile.readSync buffer file
+
+        -- Should have read some bytes
+        let actualBytesRead = fromMaybe 0 bytesRead
+        actualBytesRead `shouldSatisfy` (_ > 0)
+
+        -- Close file
+        liftEffect $ FsFile.close file
+
+        -- Clean up
+        Deno.remove false testFile
+
+      it "should read partial data synchronously when buffer is smaller than file" do
+        let testFile = "/tmp/test-fsfile-readsync-partial.txt"
+        let testContent = "This is a longer test content for partial synchronous reading"
+
+        -- Create and write to file
+        Deno.writeTextFile mempty testFile testContent
+
+        -- Open file for reading
+        file <- Deno.open (OpenOptions.read true) testFile
+
+        -- Create a small buffer (only 10 bytes)
+        buffer <- liftEffect $ Typed.empty 10
+
+        -- Read from file synchronously
+        bytesRead <- liftEffect $ FsFile.readSync buffer file
+
+        -- Should have read exactly 10 bytes (buffer size)
+        bytesRead `shouldEqual` (Just 10)
+
+        -- Close file
+        liftEffect $ FsFile.close file
+
+        -- Clean up
+        Deno.remove false testFile
+
+      it "should handle reading from empty file synchronously" do
+        let testFile = "/tmp/test-fsfile-readsync-empty.txt"
+
+        -- Create empty file
+        file <- Deno.create testFile
+
+        -- Create buffer
+        buffer <- liftEffect $ Typed.empty 10
+
+        -- Read from empty file synchronously
+        bytesRead <- liftEffect $ FsFile.readSync buffer file
+
+        -- Should read 0 bytes or Nothing from empty file
+        bytesRead `shouldSatisfy` case _ of
+          Nothing -> true
+          Just 0 -> true
+          _ -> false
+
+        -- Close file
+        liftEffect $ FsFile.close file
+
+        -- Clean up
+        Deno.remove false testFile
+
+      it "should work with different buffer sizes synchronously" do
+        let testFile = "/tmp/test-fsfile-readsync-sizes.txt"
+        let testContent = "Buffer size test content for sync"
+
+        -- Create and write to file
+        Deno.writeTextFile mempty testFile testContent
+
+        -- Test with various buffer sizes
+        file1 <- Deno.open (OpenOptions.read true) testFile
+        buffer1 <- liftEffect $ Typed.empty 1 -- Very small buffer
+        bytesRead1 <- liftEffect $ FsFile.readSync buffer1 file1
+        bytesRead1 `shouldEqual` (Just 1)
+        liftEffect $ FsFile.close file1
+
+        file2 <- Deno.open (OpenOptions.read true) testFile
+        buffer2 <- liftEffect $ Typed.empty 100 -- Large buffer
+        bytesRead2 <- liftEffect $ FsFile.readSync buffer2 file2
+        -- Should read the actual content length
+        let actualBytesRead2 = fromMaybe 0 bytesRead2
+        actualBytesRead2 `shouldSatisfy` (_ > 0)
+        actualBytesRead2 `shouldSatisfy` (_ <= 100)
+        liftEffect $ FsFile.close file2
+
+        -- Clean up
+        Deno.remove false testFile
+
+      it "should handle multiple synchronous reads from same file" do
+        let testFile = "/tmp/test-fsfile-readsync-multiple.txt"
+        let testContent = "Multiple sync reads test content here"
+
+        -- Create and write to file
+        Deno.writeTextFile mempty testFile testContent
+
+        -- Open file for reading
+        file <- Deno.open (OpenOptions.read true) testFile
+
+        -- First read
+        buffer1 <- liftEffect $ Typed.empty 10
+        bytesRead1 <- liftEffect $ FsFile.readSync buffer1 file
+        bytesRead1 `shouldEqual` (Just 10)
+
+        -- Second read (should continue from where first read left off)
+        buffer2 <- liftEffect $ Typed.empty 10
+        bytesRead2 <- liftEffect $ FsFile.readSync buffer2 file
+        let actualBytesRead2 = fromMaybe 0 bytesRead2
+        actualBytesRead2 `shouldSatisfy` (_ > 0)
+
+        -- Close file
+        liftEffect $ FsFile.close file
+
+        -- Clean up
+        Deno.remove false testFile
+
+      it "should compare sync vs async read behavior" do
+        let testFile = "/tmp/test-fsfile-sync-vs-async.txt"
+        let testContent = "Sync vs async comparison test"
+
+        -- Create and write to file
+        Deno.writeTextFile mempty testFile testContent
+
+        -- Test async read
+        file1 <- Deno.open (OpenOptions.read true) testFile
+        buffer1 <- liftEffect $ Typed.empty 20
+        bytesReadAsync <- FsFile.read buffer1 file1
+        liftEffect $ FsFile.close file1
+
+        -- Test sync read
+        file2 <- Deno.open (OpenOptions.read true) testFile
+        buffer2 <- liftEffect $ Typed.empty 20
+        bytesReadSync <- liftEffect $ FsFile.readSync buffer2 file2
+        liftEffect $ FsFile.close file2
+
+        -- Both should read the same amount
+        bytesReadAsync `shouldEqual` bytesReadSync
+
+        -- Clean up
+        Deno.remove false testFile

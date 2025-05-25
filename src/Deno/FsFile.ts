@@ -42,6 +42,10 @@ export const _read: EffectFn4<
     .catch(onError);
 };
 
+export const _readSync: EffectFn2<Uint8Array, Deno.FsFile, number | null> = (buffer, file) => {
+  return file.readSync(buffer);
+};
+
 export const seekStart: Deno.SeekMode = Deno.SeekMode.Start;
 
 export const seekCurrent: Deno.SeekMode = Deno.SeekMode.Current;

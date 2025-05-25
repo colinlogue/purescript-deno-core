@@ -7,6 +7,7 @@ module Deno.FsFile
   , lock
   , lockSync
   , read
+  , readSync
   , seek
   , SeekMode
   , seekStart
@@ -82,6 +83,11 @@ read buffer file = makeAff \cb ->
     onFailure = cb <<< Left
   in
     runEffectFn4 _read buffer file (mkEffectFn1 onSuccess) (mkEffectFn1 onFailure) *> mempty
+
+foreign import _readSync :: EffectFn2 Uint8Array FsFile (Nullable Int)
+
+readSync :: Uint8Array -> FsFile -> Effect (Maybe Int)
+readSync buffer file = toMaybe <$> runEffectFn2 _readSync buffer file
 
 foreign import _seek :: EffectFn5 Int SeekMode FsFile (Effect Unit) (EffectFn1 Error Unit) Unit
 
