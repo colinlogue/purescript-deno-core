@@ -1,5 +1,7 @@
 module Deno.FsFile
   ( FsFile
+  , SetRawOptions
+  , SeekMode
   , readable
   , writable
   , close
@@ -9,14 +11,25 @@ module Deno.FsFile
   , read
   , readSync
   , seek
-  , SeekMode
+  , seekSync
   , seekStart
   , seekCurrent
   , seekEnd
+  , setRaw
+  , stat
+  , statSync
   , sync
+  , syncData
+  , syncDataSync
+  , syncSync
   , truncate
+  , truncateSync
   , unlock
   , unlockSync
+  , utime
+  , utimeSync
+  , write
+  , writeSync
   ) where
 
 import Prelude
@@ -25,6 +38,7 @@ import Data.ArrayBuffer.Types (Uint8Array)
 import Data.Either (Either(..))
 import Data.Maybe (Maybe)
 import Data.Nullable (Nullable, toNullable, toMaybe)
+import Deno.FileInfo (FileInfo)
 import Effect (Effect)
 import Effect.Aff (Aff, makeAff)
 import Effect.Exception (Error)
@@ -34,6 +48,8 @@ import Web.Streams.WritableStream (WritableStream)
 
 
 foreign import data FsFile :: Type
+
+type SetRawOptions = { cbreak :: Boolean }
 
 -- Properties
 
@@ -106,6 +122,86 @@ seek offset mode file = makeAff \cb ->
     onFailure = cb <<< Left
   in
     runEffectFn5 _seek offset mode file onSuccess (mkEffectFn1 onFailure) *> mempty
+
+foreign import _seekSync :: EffectFn3 Int SeekMode FsFile Int
+
+seekSync :: Int -> SeekMode -> FsFile -> Effect Int
+seekSync offset mode file = runEffectFn3 _seekSync offset mode file
+
+foreign import _setRaw :: EffectFn3 Boolean (Nullable SetRawOptions) FsFile Unit
+
+setRaw :: Boolean -> Maybe SetRawOptions -> FsFile -> Effect Unit
+setRaw mode opts file = runEffectFn3 _setRaw mode (toNullable opts) file
+
+foreign import _stat :: EffectFn3 FsFile (EffectFn1 FileInfo Unit) (EffectFn1 Error Unit) Unit
+
+stat :: FsFile -> Aff FileInfo
+stat file = makeAff \cb ->
+  let
+    onSuccess = cb <<< Right
+    onFailure = cb <<< Left
+  in
+    runEffectFn3 _stat file (mkEffectFn1 onSuccess) (mkEffectFn1 onFailure) *> mempty
+
+foreign import _statSync :: EffectFn1 FsFile FileInfo
+
+statSync :: FsFile -> Effect FileInfo
+statSync = runEffectFn1 _statSync
+
+foreign import _syncData :: EffectFn3 FsFile (Effect Unit) (EffectFn1 Error Unit) Unit
+
+syncData :: FsFile -> Aff Unit
+syncData file = makeAff \cb ->
+  let
+    onSuccess = cb (Right unit)
+    onFailure = cb <<< Left
+  in
+    runEffectFn3 _syncData file onSuccess (mkEffectFn1 onFailure) *> mempty
+
+foreign import _syncDataSync :: EffectFn1 FsFile Unit
+
+syncDataSync :: FsFile -> Effect Unit
+syncDataSync = runEffectFn1 _syncDataSync
+
+foreign import _syncSync :: EffectFn1 FsFile Unit
+
+syncSync :: FsFile -> Effect Unit
+syncSync = runEffectFn1 _syncSync
+
+foreign import _truncateSync :: EffectFn2 (Nullable Int) FsFile Unit
+
+truncateSync :: Maybe Int -> FsFile -> Effect Unit
+truncateSync size file = runEffectFn2 _truncateSync (toNullable size) file
+
+foreign import _utime :: EffectFn5 Number Number FsFile (Effect Unit) (EffectFn1 Error Unit) Unit
+
+utime :: Number -> Number -> FsFile -> Aff Unit
+utime atime mtime file = makeAff \cb ->
+  let
+    onSuccess = cb (Right unit)
+    onFailure = cb <<< Left
+  in
+    runEffectFn5 _utime atime mtime file onSuccess (mkEffectFn1 onFailure) *> mempty
+
+foreign import _utimeSync :: EffectFn3 Number Number FsFile Unit
+
+utimeSync :: Number -> Number -> FsFile -> Effect Unit
+utimeSync atime mtime file = runEffectFn3 _utimeSync atime mtime file
+
+foreign import _write :: EffectFn4 Uint8Array FsFile (EffectFn1 Int Unit) (EffectFn1 Error Unit) Unit
+
+write :: Uint8Array -> FsFile -> Aff Int
+write buffer file = makeAff \cb ->
+  let
+    onSuccess = cb <<< Right
+    onFailure = cb <<< Left
+  in
+    runEffectFn4 _write buffer file (mkEffectFn1 onSuccess) (mkEffectFn1 onFailure) *> mempty
+
+foreign import _writeSync :: EffectFn2 Uint8Array FsFile Int
+
+writeSync :: Uint8Array -> FsFile -> Effect Int
+writeSync buffer file = runEffectFn2 _writeSync buffer file
 
 foreign import _truncate :: EffectFn4 (Nullable Int) FsFile (Effect Unit) (EffectFn1 Error Unit) Unit
 

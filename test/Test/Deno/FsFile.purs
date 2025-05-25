@@ -10,6 +10,7 @@ import Deno.OpenOptions as OpenOptions
 import Effect.Class (liftEffect)
 import Test.Spec (Spec, describe, it)
 import Test.Spec.Assertions (shouldEqual, shouldSatisfy)
+import Test.Web.Streams.WritableStream (encodeText)
 
 spec :: Spec Unit
 spec = do
@@ -396,6 +397,300 @@ spec = do
 
         -- Both should read the same amount
         bytesReadAsync `shouldEqual` bytesReadSync
+
+        -- Clean up
+        Deno.remove false testFile
+
+    describe "Write operations" do
+      it "should write data to file asynchronously" do
+        let testFile = "/tmp/test-fsfile-write.txt"
+        let testContent = "Hello from write test!"
+
+        -- Create file for writing
+        file <- Deno.open (OpenOptions.write true <> OpenOptions.create true) testFile
+
+        -- Encode text to Uint8Array
+        let buffer = encodeText testContent
+
+        -- Write to file
+        bytesWritten <- FsFile.write buffer file
+        bytesWritten `shouldSatisfy` (_ > 0)
+
+        -- Close file
+        liftEffect $ FsFile.close file
+
+        -- Verify content was written correctly
+        content <- Deno.readTextFile testFile
+        content `shouldEqual` testContent
+
+        -- Clean up
+        Deno.remove false testFile
+
+      it "should write data to file synchronously" do
+        let testFile = "/tmp/test-fsfile-writesync.txt"
+        let testContent = "Hello from writeSync test!"
+
+        -- Create file for writing
+        file <- Deno.open (OpenOptions.write true <> OpenOptions.create true) testFile
+
+        -- Encode text to Uint8Array
+        let buffer = encodeText testContent
+
+        -- Write to file synchronously
+        bytesWritten <- liftEffect $ FsFile.writeSync buffer file
+        bytesWritten `shouldSatisfy` (_ > 0)
+
+        -- Close file
+        liftEffect $ FsFile.close file
+
+        -- Verify content was written correctly
+        content <- Deno.readTextFile testFile
+        content `shouldEqual` testContent
+
+        -- Clean up
+        Deno.remove false testFile
+
+      it "should handle multiple writes to same file" do
+        let testFile = "/tmp/test-fsfile-multi-write.txt"
+        let testContent1 = "First write"
+        let testContent2 = " Second write"
+
+        -- Create file for writing
+        file <- Deno.open (OpenOptions.write true <> OpenOptions.create true) testFile
+
+        -- First write
+        let buffer1 = encodeText testContent1
+        bytesWritten1 <- FsFile.write buffer1 file
+        bytesWritten1 `shouldSatisfy` (_ > 0)
+
+        -- Second write (should append)
+        let buffer2 = encodeText testContent2
+        bytesWritten2 <- FsFile.write buffer2 file
+        bytesWritten2 `shouldSatisfy` (_ > 0)
+
+        -- Close file
+        liftEffect $ FsFile.close file
+
+        -- Verify both writes
+        content <- Deno.readTextFile testFile
+        content `shouldEqual` (testContent1 <> testContent2)
+
+        -- Clean up
+        Deno.remove false testFile
+
+    describe "Seek operations" do
+      it "should seek to specific position synchronously" do
+        let testFile = "/tmp/test-fsfile-seeksync.txt"
+        let testContent = "Hello world test content"
+
+        -- Create and write to file
+        Deno.writeTextFile mempty testFile testContent
+
+        -- Open file for reading and writing
+        file <- Deno.open (OpenOptions.read true <> OpenOptions.write true) testFile
+
+        -- Seek to position 6 (after "Hello ")
+        newPos <- liftEffect $ FsFile.seekSync 6 FsFile.seekStart file
+        newPos `shouldEqual` 6
+
+        -- Read from new position
+        buffer <- liftEffect $ Typed.empty 5
+        bytesRead <- FsFile.read buffer file
+        bytesRead `shouldEqual` (Just 5)
+
+        -- Close file
+        liftEffect $ FsFile.close file
+
+        -- Clean up
+        Deno.remove false testFile
+
+      it "should seek using different seek modes synchronously" do
+        let testFile = "/tmp/test-fsfile-seeksync-modes.txt"
+        let testContent = "0123456789" -- 10 bytes
+
+        -- Create and write to file
+        Deno.writeTextFile mempty testFile testContent
+
+        -- Open file
+        file <- Deno.open (OpenOptions.read true <> OpenOptions.write true) testFile
+
+        -- Seek from start
+        pos1 <- liftEffect $ FsFile.seekSync 3 FsFile.seekStart file
+        pos1 `shouldEqual` 3
+
+        -- Seek relative to current position
+        pos2 <- liftEffect $ FsFile.seekSync 2 FsFile.seekCurrent file
+        pos2 `shouldEqual` 5
+
+        -- Seek from end
+        pos3 <- liftEffect $ FsFile.seekSync (-2) FsFile.seekEnd file
+        pos3 `shouldEqual` 8
+
+        -- Close file
+        liftEffect $ FsFile.close file
+
+        -- Clean up
+        Deno.remove false testFile
+
+    describe "File synchronization operations" do
+      it "should sync file data to disk" do
+        let testFile = "/tmp/test-fsfile-syncdata.txt"
+        let testContent = "Data to sync"
+
+        -- Create file for writing
+        file <- Deno.open (OpenOptions.write true <> OpenOptions.create true) testFile
+
+        -- Write data
+        let buffer = encodeText testContent
+        _ <- FsFile.write buffer file
+
+        -- Sync data
+        FsFile.syncData file
+
+        -- Close file
+        liftEffect $ FsFile.close file
+
+        -- Verify data was written
+        content <- Deno.readTextFile testFile
+        content `shouldEqual` testContent
+
+        -- Clean up
+        Deno.remove false testFile
+
+      it "should sync file data to disk synchronously" do
+        let testFile = "/tmp/test-fsfile-syncdatasync.txt"
+        let testContent = "Data to sync synchronously"
+
+        -- Create file for writing
+        file <- Deno.open (OpenOptions.write true <> OpenOptions.create true) testFile
+
+        -- Write data
+        let buffer = encodeText testContent
+        _ <- liftEffect $ FsFile.writeSync buffer file
+
+        -- Sync data synchronously
+        liftEffect $ FsFile.syncDataSync file
+
+        -- Close file
+        liftEffect $ FsFile.close file
+
+        -- Verify data was written
+        content <- Deno.readTextFile testFile
+        content `shouldEqual` testContent
+
+        -- Clean up
+        Deno.remove false testFile
+
+      it "should sync file and metadata synchronously" do
+        let testFile = "/tmp/test-fsfile-syncsync.txt"
+        let testContent = "Data and metadata to sync"
+
+        -- Create file for writing
+        file <- Deno.open (OpenOptions.write true <> OpenOptions.create true) testFile
+
+        -- Write data
+        let buffer = encodeText testContent
+        _ <- liftEffect $ FsFile.writeSync buffer file
+
+        -- Sync file and metadata synchronously
+        liftEffect $ FsFile.syncSync file
+
+        -- Close file
+        liftEffect $ FsFile.close file
+
+        -- Verify data was written
+        content <- Deno.readTextFile testFile
+        content `shouldEqual` testContent
+
+        -- Clean up
+        Deno.remove false testFile
+
+    describe "File truncation operations" do
+      it "should truncate file synchronously" do
+        let testFile = "/tmp/test-fsfile-truncatesync.txt"
+        let testContent = "This is a long content that will be truncated"
+
+        -- Create and write to file
+        Deno.writeTextFile mempty testFile testContent
+
+        -- Open file for writing
+        file <- Deno.open (OpenOptions.write true) testFile
+
+        -- Truncate to 10 bytes
+        liftEffect $ FsFile.truncateSync (Just 10) file
+
+        -- Close file
+        liftEffect $ FsFile.close file
+
+        -- Verify truncation
+        content <- Deno.readTextFile testFile
+        content `shouldEqual` "This is a "
+
+        -- Clean up
+        Deno.remove false testFile
+
+      it "should truncate entire file synchronously" do
+        let testFile = "/tmp/test-fsfile-truncatesync-empty.txt"
+        let testContent = "Content to be completely removed"
+
+        -- Create and write to file
+        Deno.writeTextFile mempty testFile testContent
+
+        -- Open file for writing
+        file <- Deno.open (OpenOptions.write true) testFile
+
+        -- Truncate entire file
+        liftEffect $ FsFile.truncateSync Nothing file
+
+        -- Close file
+        liftEffect $ FsFile.close file
+
+        -- Verify file is empty
+        content <- Deno.readTextFile testFile
+        content `shouldEqual` ""
+
+        -- Clean up
+        Deno.remove false testFile
+
+    describe "File timestamp operations" do
+      it "should update file timestamps asynchronously" do
+        let testFile = "/tmp/test-fsfile-utime.txt"
+        let testContent = "File for timestamp test"
+
+        -- Create file
+        Deno.writeTextFile mempty testFile testContent
+
+        -- Open file
+        file <- Deno.open (OpenOptions.write true) testFile
+
+        -- Update timestamps (Unix epoch: Jan 1, 2024)
+        let atime = 1704067200.0 -- Access time
+        let mtime = 1704067200.0 -- Modification time
+        FsFile.utime atime mtime file
+
+        -- Close file
+        liftEffect $ FsFile.close file
+
+        -- Clean up
+        Deno.remove false testFile
+
+      it "should update file timestamps synchronously" do
+        let testFile = "/tmp/test-fsfile-utimesync.txt"
+        let testContent = "File for sync timestamp test"
+
+        -- Create file
+        Deno.writeTextFile mempty testFile testContent
+
+        -- Open file
+        file <- Deno.open (OpenOptions.write true) testFile
+
+        -- Update timestamps synchronously
+        let atime = 1704067200.0
+        let mtime = 1704067200.0
+        liftEffect $ FsFile.utimeSync atime mtime file
+
+        -- Close file
+        liftEffect $ FsFile.close file
 
         -- Clean up
         Deno.remove false testFile
