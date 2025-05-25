@@ -3,17 +3,24 @@ module Deno.ChildProcess
   , CommandStatus
   , pid
   , status
+  , stdin
+  , stdout
+  , stderr
   ) where
 
 import Prelude
 
+import Data.ArrayBuffer.Types (Uint8Array)
 import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
 import Data.Nullable (Nullable, toMaybe)
 import Deno.Signal (Signal(..))
+import Effect (Effect)
 import Effect.Aff (Aff, makeAff)
 import Effect.Exception (Error)
-import Effect.Uncurried (EffectFn1, EffectFn3, mkEffectFn1, runEffectFn3)
+import Effect.Uncurried (EffectFn1, EffectFn3, mkEffectFn1, runEffectFn1, runEffectFn3)
+import Web.Streams.ReadableStream (ReadableStream)
+import Web.Streams.WritableStream (WritableStream)
 
 foreign import data ChildProcess :: Type
 
@@ -30,6 +37,10 @@ type CommandStatusRaw =
   }
 
 foreign import pid :: ChildProcess -> Int
+
+foreign import _stdin :: EffectFn1 ChildProcess (WritableStream Uint8Array)
+foreign import _stdout :: EffectFn1 ChildProcess (ReadableStream Uint8Array)
+foreign import _stderr :: EffectFn1 ChildProcess (ReadableStream Uint8Array)
 
 foreign import _status :: EffectFn3 ChildProcess (EffectFn1 CommandStatusRaw Unit) (EffectFn1 Error Unit) Unit
 
@@ -87,3 +98,12 @@ status childProcess = makeAff \cb ->
     onError = cb <<< Left
   in
     runEffectFn3 _status childProcess (mkEffectFn1 onSuccess) (mkEffectFn1 onError) *> mempty
+
+stdin :: ChildProcess -> Effect (WritableStream Uint8Array)
+stdin = runEffectFn1 _stdin
+
+stdout :: ChildProcess -> Effect (ReadableStream Uint8Array)
+stdout = runEffectFn1 _stdout
+
+stderr :: ChildProcess -> Effect (ReadableStream Uint8Array)
+stderr = runEffectFn1 _stderr

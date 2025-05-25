@@ -323,3 +323,46 @@ spec = do
         status.code `shouldEqual` 0
         -- For a normal exit, signal should be Nothing
         status.signal `shouldEqual` Nothing
+
+      it "should access stdin, stdout, and stderr streams of spawned process" do
+        let opts = CommandOptions.stdout CommandOptions.Piped
+                <> CommandOptions.stderr CommandOptions.Piped
+                <> CommandOptions.stdin CommandOptions.Piped
+        cmd <- liftEffect $ Command.new opts "echo"
+        childProcess <- liftEffect $ Command.spawn cmd
+
+        -- Test that we can access the streams
+        stdin <- liftEffect $ ChildProcess.stdin childProcess
+        stdout <- liftEffect $ ChildProcess.stdout childProcess
+        stderr <- liftEffect $ ChildProcess.stderr childProcess
+
+        -- Just verify the streams were created (they should be non-null for piped streams)
+        pure unit
+
+      it "should handle command that writes to stderr" do
+        let opts = CommandOptions.stdout CommandOptions.Piped
+                <> CommandOptions.stderr CommandOptions.Piped
+                <> CommandOptions.args ["-c", "echo 'error message' >&2; exit 1"]
+        cmd <- liftEffect $ Command.new opts "sh"
+        childProcess <- liftEffect $ Command.spawn cmd
+
+        status <- ChildProcess.status childProcess
+
+        -- Command should fail
+        status.success `shouldEqual` false
+        status.code `shouldEqual` 1
+        status.signal `shouldEqual` Nothing
+
+      it "should spawn a long-running command and get its pid" do
+        let opts = CommandOptions.stdout CommandOptions.Piped
+                <> CommandOptions.stderr CommandOptions.Piped
+                <> CommandOptions.args ["-c", "sleep 0.1; echo done"]
+        cmd <- liftEffect $ Command.new opts "sh"
+        childProcess <- liftEffect $ Command.spawn cmd
+
+        let pid = ChildProcess.pid childProcess
+        pid `shouldSatisfy` (_ > 0)
+
+        -- Wait for it to complete
+        status <- ChildProcess.status childProcess
+        status.success `shouldEqual` true

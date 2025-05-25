@@ -15,3 +15,15 @@ export const _status: EffectFn3<
     .then(onSuccess)
     .catch(onError);
 };
+
+export const _stdin = (childProcess: Deno.ChildProcess): WritableStream<Uint8Array> => {
+  return childProcess.stdin;
+};
+
+export const _stdout = (childProcess: Deno.ChildProcess): ReadableStream<Uint8Array> => {
+  return childProcess.stdout;
+};
+
+export const _stderr = (childProcess: Deno.ChildProcess): ReadableStream<Uint8Array> => {
+  return childProcess.stderr;
+};
