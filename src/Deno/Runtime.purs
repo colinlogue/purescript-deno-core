@@ -10,6 +10,7 @@ module Deno.Runtime
   , memoryUsage
   , osRelease
   , osUptime
+  , refTimer
   , uid
   , unrefTimer
   , addSignalListener
@@ -32,12 +33,12 @@ derive instance Eq LoadAvgResult
 derive instance Ord LoadAvgResult
 
 instance Show LoadAvgResult where
-  show (LoadAvgResult min1 min5 min15) = 
+  show (LoadAvgResult min1 min5 min15) =
     "LoadAvgResult " <> show min1 <> " " <> show min5 <> " " <> show min15
 
-type MemoryUsageResult = 
+type MemoryUsageResult =
   { rss :: Number
-  , heapTotal :: Number  
+  , heapTotal :: Number
   , heapUsed :: Number
   , external :: Number
   }
@@ -81,6 +82,11 @@ foreign import _uid :: Effect (Nullable Int)
 
 uid :: Effect (Maybe Int)
 uid = Nullable.toMaybe <$> _uid
+
+foreign import _refTimer :: EffectFn1 Int Unit
+
+refTimer :: Int -> Effect Unit
+refTimer timerId = runEffectFn1 _refTimer timerId
 
 foreign import _unrefTimer :: EffectFn1 Int Unit
 
