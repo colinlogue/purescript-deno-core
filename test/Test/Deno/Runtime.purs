@@ -4,7 +4,7 @@ import Prelude
 
 import Data.String as String
 import Deno (consoleSize) as Deno
-import Deno.Runtime (chdir, cwd, execPath, addSignalListener, removeSignalListener) as Deno
+import Deno.Runtime (chdir, cwd, execPath, loadavg, addSignalListener, removeSignalListener, LoadAvgResult(..)) as Deno
 import Deno.Runtime.Signal (Signal(..))
 import Effect (Effect)
 import Effect.Class (liftEffect)
@@ -31,6 +31,14 @@ spec = do
           size <- liftEffect Deno.consoleSize
           size.columns `shouldSatisfy` (_ > 0)
           size.rows `shouldSatisfy` (_ > 0)
+
+      it "should get system load averages" do
+        (Deno.LoadAvgResult min1 min5 min15) <- liftEffect Deno.loadavg
+        -- Should return load averages for 1, 5, 15 minutes
+        -- On Windows this returns [0, 0, 0], on Unix it should be non-negative numbers
+        min1 `shouldSatisfy` (_ >= 0.0)
+        min5 `shouldSatisfy` (_ >= 0.0)
+        min15 `shouldSatisfy` (_ >= 0.0)
 
     describe "Directory operations" do
       it "should change working directory" do

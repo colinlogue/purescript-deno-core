@@ -5,6 +5,8 @@ module Deno.Runtime
   , exit
   , gid
   , hostname
+  , loadavg
+  , LoadAvgResult(..)
   , osRelease
   , osUptime
   , uid
@@ -22,6 +24,15 @@ import Data.Nullable as Nullable
 import Deno.Runtime.Signal (Signal)
 import Effect (Effect)
 import Effect.Uncurried (EffectFn1, EffectFn2, runEffectFn1, runEffectFn2)
+
+data LoadAvgResult = LoadAvgResult Number Number Number
+
+derive instance Eq LoadAvgResult
+derive instance Ord LoadAvgResult
+
+instance Show LoadAvgResult where
+  show (LoadAvgResult min1 min5 min15) = 
+    "LoadAvgResult " <> show min1 <> " " <> show min5 <> " " <> show min15
 
 foreign import _chdir :: EffectFn1 StringOrUrl Unit
 
@@ -43,6 +54,11 @@ gid :: Effect (Maybe Int)
 gid = Nullable.toMaybe <$> _gid
 
 foreign import hostname :: Effect String
+
+foreign import _loadavg :: EffectFn1 (Number -> Number -> Number -> LoadAvgResult) LoadAvgResult
+
+loadavg :: Effect LoadAvgResult
+loadavg = runEffectFn1 _loadavg LoadAvgResult
 
 foreign import osRelease :: Effect String
 

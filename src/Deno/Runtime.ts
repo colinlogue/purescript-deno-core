@@ -24,6 +24,11 @@ export const hostname = (): string => {
   return Deno.hostname();
 };
 
+export const _loadavg: EffectFn1<(min1: number) => (min5: number) => (min15: number) => unknown, unknown> = (constructor) => {
+  const [min1, min5, min15] = Deno.loadavg();
+  return constructor(min1)(min5)(min15);
+};
+
 export const osRelease = (): string => {
   return Deno.osRelease();
 };
