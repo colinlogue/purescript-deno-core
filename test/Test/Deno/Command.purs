@@ -2,20 +2,16 @@ module Test.Deno.Command where
 
 import Prelude
 
-import Control.Monad.Trans.Class (lift)
-import Data.ArrayBuffer.Typed as Typed
 import Data.ArrayBuffer.Types (Uint8Array)
 import Data.Maybe (Maybe(..))
 import Data.String as String
 import Deno.ChildProcess as ChildProcess
 import Deno.Command as Command
-import Deno.CommandOptions (class IsCommandEnv)
 import Deno.CommandOptions as CommandOptions
 import Effect (Effect)
 import Effect.Class (liftEffect)
-import Effect.Uncurried (EffectFn2)
 import Test.Spec (Spec, describe, it)
-import Test.Spec.Assertions (shouldEqual, shouldSatisfy, shouldNotEqual)
+import Test.Spec.Assertions (shouldEqual, shouldSatisfy)
 
 -- Helper function to decode Uint8Array to String for testing
 foreign import decodeText :: Uint8Array -> String
@@ -27,85 +23,70 @@ spec = do
   describe "Command" do
     describe "Command creation" do
       it "should create a command with empty options" do
-        cmd <- liftEffect $ Command.new CommandOptions.empty "echo"
         -- Just verify the command was created without throwing
-        pure unit
+
+        void $ liftEffect $ Command.new CommandOptions.empty "echo"
 
       it "should create a command with arguments" do
         let opts = CommandOptions.args ["hello", "world"]
-        cmd <- liftEffect $ Command.new opts "echo"
-        pure unit
+        void $ liftEffect $ Command.new opts "echo"
 
       it "should create a command with cwd option" do
         let opts = CommandOptions.cwd "/tmp"
-        cmd <- liftEffect $ Command.new opts "pwd"
-        pure unit
+        void $ liftEffect $ Command.new opts "pwd"
 
       it "should create a command with environment variables" do
         let opts = CommandOptions.env { "TEST_VAR": "test_value", "ANOTHER_VAR": "another_value" }
-        cmd <- liftEffect $ Command.new opts "env"
-        pure unit
+        void $ liftEffect $ Command.new opts "env"
 
       it "should create a command with uid/gid options" do
         let opts = CommandOptions.uid 1000 <> CommandOptions.gid 1000
-        cmd <- liftEffect $ Command.new opts "id"
-        pure unit
+        void $ liftEffect $ Command.new opts "id"
 
       it "should create a command with clearEnv option" do
         let opts = CommandOptions.clearEnv true
-        cmd <- liftEffect $ Command.new opts "env"
-        pure unit
+        void $ liftEffect $ Command.new opts "env"
 
       it "should create a command with windowsRawArguments option" do
         let opts = CommandOptions.windowsRawArguments true
-        cmd <- liftEffect $ Command.new opts "echo"
-        pure unit
+        void $ liftEffect $ Command.new opts "echo"
 
     describe "Stdio options" do
       it "should create a command with piped stdin" do
         let opts = CommandOptions.stdin CommandOptions.Piped
-        cmd <- liftEffect $ Command.new opts "cat"
-        pure unit
+        void $ liftEffect $ Command.new opts "cat"
 
       it "should create a command with inherit stdin" do
         let opts = CommandOptions.stdin CommandOptions.Inherit
-        cmd <- liftEffect $ Command.new opts "cat"
-        pure unit
+        void $ liftEffect $ Command.new opts "cat"
 
       it "should create a command with null stdin" do
         let opts = CommandOptions.stdin CommandOptions.Null
-        cmd <- liftEffect $ Command.new opts "cat"
-        pure unit
+        void $ liftEffect $ Command.new opts "cat"
 
       it "should create a command with piped stdout" do
         let opts = CommandOptions.stdout CommandOptions.Piped
-        cmd <- liftEffect $ Command.new opts "echo"
-        pure unit
+        void $ liftEffect $ Command.new opts "echo"
 
       it "should create a command with inherit stdout" do
         let opts = CommandOptions.stdout CommandOptions.Inherit
-        cmd <- liftEffect $ Command.new opts "echo"
-        pure unit
+        void $ liftEffect $ Command.new opts "echo"
 
       it "should create a command with null stdout" do
         let opts = CommandOptions.stdout CommandOptions.Null
-        cmd <- liftEffect $ Command.new opts "echo"
-        pure unit
+        void $ liftEffect $ Command.new opts "echo"
 
       it "should create a command with piped stderr" do
         let opts = CommandOptions.stderr CommandOptions.Piped
-        cmd <- liftEffect $ Command.new opts "echo"
-        pure unit
+        void $ liftEffect $ Command.new opts "echo"
 
       it "should create a command with inherit stderr" do
         let opts = CommandOptions.stderr CommandOptions.Inherit
-        cmd <- liftEffect $ Command.new opts "echo"
-        pure unit
+        void $ liftEffect $ Command.new opts "echo"
 
       it "should create a command with null stderr" do
         let opts = CommandOptions.stderr CommandOptions.Null
-        cmd <- liftEffect $ Command.new opts "echo"
-        pure unit
+        void $ liftEffect $ Command.new opts "echo"
 
     describe "Combined options" do
       it "should create a command with multiple options combined" do
@@ -114,7 +95,7 @@ spec = do
                 <> CommandOptions.stdout CommandOptions.Piped
                 <> CommandOptions.stderr CommandOptions.Piped
                 <> CommandOptions.env { "TEST_ENV": "value" }
-        cmd <- liftEffect $ Command.new opts "echo"
+        void $ liftEffect $ Command.new opts "echo"
         pure unit
 
     describe "Command output - async" do
@@ -332,9 +313,9 @@ spec = do
         childProcess <- liftEffect $ Command.spawn cmd
 
         -- Test that we can access the streams
-        stdin <- liftEffect $ ChildProcess.stdin childProcess
-        stdout <- liftEffect $ ChildProcess.stdout childProcess
-        stderr <- liftEffect $ ChildProcess.stderr childProcess
+        void $ liftEffect $ ChildProcess.stdin childProcess
+        void $ liftEffect $ ChildProcess.stdout childProcess
+        void $ liftEffect $ ChildProcess.stderr childProcess
 
         -- Just verify the streams were created (they should be non-null for piped streams)
         pure unit
