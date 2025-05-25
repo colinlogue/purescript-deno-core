@@ -14,7 +14,7 @@ export const clearEnv: Fn1<boolean, Deno.CommandOptions> = (value) => ({
   clearEnv: value,
 });
 
-export const env: Fn1<Record<string, string>, Deno.CommandOptions> = (value) => ({
+export const _env: Fn1<Record<string, string>, Deno.CommandOptions> = (value) => ({
   env: value,
 });
 
@@ -26,16 +26,16 @@ export const gid: Fn1<number, Deno.CommandOptions> = (value) => ({
   gid: value,
 });
 
-export const _stdin: Fn1<string, Deno.CommandOptions> = (value) => ({
-  stdin: value as "piped" | "inherit" | "null",
+export const _stdin: Fn1<"piped" | "inherit" | "null", Deno.CommandOptions> = (value) => ({
+  stdin: value,
 });
 
-export const _stdout: Fn1<string, Deno.CommandOptions> = (value) => ({
-  stdout: value as "piped" | "inherit" | "null",
+export const _stdout: Fn1<"piped" | "inherit" | "null", Deno.CommandOptions> = (value) => ({
+  stdout: value,
 });
 
-export const _stderr: Fn1<string, Deno.CommandOptions> = (value) => ({
-  stderr: value as "piped" | "inherit" | "null",
+export const _stderr: Fn1<"piped" | "inherit" | "null", Deno.CommandOptions> = (value) => ({
+  stderr: value,
 });
 
 export const windowsRawArguments: Fn1<boolean, Deno.CommandOptions> = (value) => ({

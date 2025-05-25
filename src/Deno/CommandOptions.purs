@@ -22,6 +22,7 @@ import Data.IsStringOrUrl (class IsStringOrUrl, StringOrUrl, toStringOrUrl)
 import JS.Fetch.AbortController (AbortSignal)
 import Prim.RowList (class RowToList, RowList)
 import Prim.RowList as RowList
+import Type.RowList (class ListToRow)
 import Unsafe.Coerce (unsafeCoerce)
 
 
@@ -48,7 +49,7 @@ foreign import clearEnv :: Boolean -> CommandOptions
 
 foreign import _env :: CommandEnv -> CommandOptions
 
-env :: forall r. IsCommandEnv r => Record r -> CommandOptions
+env :: forall r rl. RowToList r rl => IsCommandEnv rl => Record r -> CommandOptions
 env = unsafeCoerce >>> _env
 
 foreign import uid :: Int -> CommandOptions
@@ -82,8 +83,6 @@ instance Monoid CommandOptions where
 
 foreign import data CommandEnv :: Type
 
-class IsCommandEnv (r :: Row Type)
-class IsCommandEnvRL (rl :: RowList Type)
-instance IsCommandEnvRL RowList.Nil
-instance (IsCommandEnvRL tail) => IsCommandEnvRL (RowList.Cons label String tail)
-instance (RowToList r rl, IsCommandEnvRL rl) => IsCommandEnv r
+class IsCommandEnv (rl :: RowList Type)
+instance IsCommandEnv RowList.Nil
+instance (IsCommandEnv tail) => IsCommandEnv (RowList.Cons label String tail)

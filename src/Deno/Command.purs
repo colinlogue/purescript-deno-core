@@ -1,14 +1,20 @@
 module Deno.Command
   ( Command
   , new
+  , output
+  , outputSync
   ) where
 
 import Prelude
 
+import Data.ArrayBuffer.Types (Uint8Array)
+import Data.Either (Either(..))
 import Data.IsStringOrUrl (class IsStringOrUrl, StringOrUrl, toStringOrUrl)
 import Deno.CommandOptions (CommandOptions)
 import Effect (Effect)
-import Effect.Uncurried (EffectFn2, runEffectFn2)
+import Effect.Aff (Aff, makeAff)
+import Effect.Exception (Error)
+import Effect.Uncurried (EffectFn1, EffectFn2, EffectFn3, mkEffectFn1, runEffectFn1, runEffectFn2, runEffectFn3)
 
 foreign import data Command :: Type
 
@@ -16,3 +22,25 @@ foreign import _new :: EffectFn2 CommandOptions StringOrUrl Command
 
 new :: forall a. IsStringOrUrl a => CommandOptions -> a -> Effect Command
 new opts command = runEffectFn2 _new opts (toStringOrUrl command)
+
+-- Methods
+
+type CommandOutput =
+  { stdout :: Uint8Array
+  , stderr :: Uint8Array
+  }
+
+foreign import _output :: EffectFn3 Command (EffectFn1 CommandOutput Unit) (EffectFn1 Error Unit) Unit
+
+output :: Command -> Aff CommandOutput
+output cmd = makeAff \cb ->
+  let
+    onSuccess = cb <<< Right
+    onError = cb <<< Left
+  in
+    runEffectFn3 _output cmd (mkEffectFn1 onSuccess) (mkEffectFn1 onError) *> mempty
+
+foreign import _outputSync :: EffectFn1 Command CommandOutput
+
+outputSync :: Command -> Effect CommandOutput
+outputSync = runEffectFn1 _outputSync
