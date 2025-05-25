@@ -437,3 +437,46 @@ spec = do
         result.success `shouldEqual` false
         result.code `shouldEqual` 1
         result.signal `shouldEqual` Nothing
+
+      it "should call ref method without errors" do
+        let opts = CommandOptions.stdout CommandOptions.Piped
+                <> CommandOptions.stderr CommandOptions.Piped
+                <> CommandOptions.args ["Hello, ref test!"]
+        cmd <- liftEffect $ Command.new opts "echo"
+        childProcess <- liftEffect $ Command.spawn cmd
+
+        -- Call ref method - should not throw
+        void $ liftEffect $ ChildProcess.ref childProcess
+
+        -- Wait for process to complete and verify it still works
+        result <- ChildProcess.status childProcess
+        result.success `shouldEqual` true
+
+      it "should call unref method without errors" do
+        let opts = CommandOptions.stdout CommandOptions.Piped
+                <> CommandOptions.stderr CommandOptions.Piped
+                <> CommandOptions.args ["Hello, unref test!"]
+        cmd <- liftEffect $ Command.new opts "echo"
+        childProcess <- liftEffect $ Command.spawn cmd
+
+        -- Call unref method - should not throw
+        void $ liftEffect $ ChildProcess.unref childProcess
+
+        -- Wait for process to complete and verify it still works
+        result <- ChildProcess.status childProcess
+        result.success `shouldEqual` true
+
+      it "should call ref and unref in sequence without errors" do
+        let opts = CommandOptions.stdout CommandOptions.Piped
+                <> CommandOptions.stderr CommandOptions.Piped
+                <> CommandOptions.args ["Hello, ref/unref sequence test!"]
+        cmd <- liftEffect $ Command.new opts "echo"
+        childProcess <- liftEffect $ Command.spawn cmd
+
+        -- Call ref then unref - should not throw
+        void $ liftEffect $ ChildProcess.ref childProcess
+        void $ liftEffect $ ChildProcess.unref childProcess
+
+        -- Wait for process to complete and verify it still works
+        result <- ChildProcess.status childProcess
+        result.success `shouldEqual` true

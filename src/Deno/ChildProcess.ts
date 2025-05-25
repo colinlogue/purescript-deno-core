@@ -46,3 +46,11 @@ export const _output: EffectFn3<
     .then(onSuccess)
     .catch(onError);
 };
+
+export const _ref: EffectFn1<Deno.ChildProcess, void> = (childProcess) => {
+  childProcess.ref();
+}
+
+export const _unref: EffectFn1<Deno.ChildProcess, void> = (childProcess) => {
+  childProcess.unref();
+}

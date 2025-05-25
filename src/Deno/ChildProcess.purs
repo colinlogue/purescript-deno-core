@@ -9,6 +9,8 @@ module Deno.ChildProcess
   , stderr
   , kill
   , output
+  , ref
+  , unref
   ) where
 
 import Prelude
@@ -66,6 +68,10 @@ foreign import _status :: EffectFn3 ChildProcess (EffectFn1 CommandStatusRaw Uni
 foreign import _kill :: EffectFn2 (Nullable String) ChildProcess Unit
 
 foreign import _output :: EffectFn3 ChildProcess (EffectFn1 CommandOutputRaw Unit) (EffectFn1 Error Unit) Unit
+
+foreign import _ref :: EffectFn1 ChildProcess Unit
+
+foreign import _unref :: EffectFn1 ChildProcess Unit
 
 signalToString :: Signal -> String
 signalToString = case _ of
@@ -191,3 +197,9 @@ output childProcess = makeAff \cb ->
     onError = cb <<< Left
   in
     runEffectFn3 _output childProcess (mkEffectFn1 onSuccess) (mkEffectFn1 onError) *> mempty
+
+ref :: ChildProcess -> Effect Unit
+ref = runEffectFn1 _ref
+
+unref :: ChildProcess -> Effect Unit
+unref = runEffectFn1 _unref
