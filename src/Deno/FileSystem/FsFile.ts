@@ -4,7 +4,7 @@ import type {
   EffectFn3,
   EffectFn4,
   EffectFn5,
-} from "../purescript.d.ts";
+} from "../../purescript.d.ts";
 
 export const _close: EffectFn1<Deno.FsFile, void> = (file) => {
   file.close();

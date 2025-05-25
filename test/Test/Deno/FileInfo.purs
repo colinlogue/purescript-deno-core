@@ -4,9 +4,9 @@ import Prelude
 
 import Data.Maybe (Maybe(..))
 import Deno.FileSystem as Deno
-import Deno.FileInfo as FileInfo
-import Deno.FsFile as FsFile
-import Deno.OpenOptions as OpenOptions
+import Deno.FileSystem.FileInfo as FileInfo
+import Deno.FileSystem.FsFile as FsFile
+import Deno.FileSystem.OpenOptions as OpenOptions
 import Effect.Class (liftEffect)
 import Test.Spec (Spec, describe, it)
 import Test.Spec.Assertions (shouldEqual, shouldSatisfy)

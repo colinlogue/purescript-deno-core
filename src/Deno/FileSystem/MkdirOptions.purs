@@ -1,4 +1,4 @@
-module Deno.MkdirOptions where
+module Deno.FileSystem.MkdirOptions where
 
 import Prelude
 

@@ -1,4 +1,4 @@
-module Deno.OpenOptions where
+module Deno.FileSystem.OpenOptions where
 
 import Prelude
 

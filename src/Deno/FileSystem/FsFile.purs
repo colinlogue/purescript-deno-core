@@ -1,4 +1,4 @@
-module Deno.FsFile
+module Deno.FileSystem.FsFile
   ( FsFile
   , SetRawOptions
   , SeekMode
@@ -38,7 +38,7 @@ import Data.ArrayBuffer.Types (Uint8Array)
 import Data.Either (Either(..))
 import Data.Maybe (Maybe)
 import Data.Nullable (Nullable, toNullable, toMaybe)
-import Deno.FileInfo (FileInfo)
+import Deno.FileSystem.FileInfo (FileInfo)
 import Effect (Effect)
 import Effect.Aff (Aff, makeAff)
 import Effect.Exception (Error)

@@ -1,4 +1,4 @@
-module Deno.FileInfo
+module Deno.FileSystem.FileInfo
   ( FileInfo
   , JSDate
   , isFile

@@ -1,4 +1,4 @@
-import type { Fn1, Fn2 } from "../purescript.d.ts";
+import type { Fn1, Fn2 } from "../../purescript.d.ts";
 
 export const recursive: Fn1<boolean, Deno.MkdirOptions> = (value) => ({
   recursive: value,
