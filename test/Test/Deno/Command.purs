@@ -6,6 +6,7 @@ import Control.Monad.Trans.Class (lift)
 import Data.ArrayBuffer.Typed as Typed
 import Data.ArrayBuffer.Types (Uint8Array)
 import Data.String as String
+import Deno.ChildProcess as ChildProcess
 import Deno.Command as Command
 import Deno.CommandOptions (class IsCommandEnv)
 import Deno.CommandOptions as CommandOptions
@@ -301,3 +302,11 @@ spec = do
         let stderr = decodeText result.stderr
         stdout `shouldSatisfy` String.contains (String.Pattern "to stdout")
         stderr `shouldSatisfy` String.contains (String.Pattern "to stderr")
+
+    describe "spawn" do
+      it "should spawn a child process and return a valid pid" do
+        let opts = CommandOptions.empty
+        cmd <- liftEffect $ Command.new opts "echo"
+        childProcess <- liftEffect $ Command.spawn cmd
+        let pid = ChildProcess.pid childProcess
+        pid `shouldSatisfy` (_ > 0)

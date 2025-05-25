@@ -3,6 +3,7 @@ module Deno.Command
   , new
   , output
   , outputSync
+  , spawn
   ) where
 
 import Prelude
@@ -10,6 +11,7 @@ import Prelude
 import Data.ArrayBuffer.Types (Uint8Array)
 import Data.Either (Either(..))
 import Data.IsStringOrUrl (class IsStringOrUrl, StringOrUrl, toStringOrUrl)
+import Deno.ChildProcess (ChildProcess)
 import Deno.CommandOptions (CommandOptions)
 import Effect (Effect)
 import Effect.Aff (Aff, makeAff)
@@ -44,3 +46,8 @@ foreign import _outputSync :: EffectFn1 Command CommandOutput
 
 outputSync :: Command -> Effect CommandOutput
 outputSync = runEffectFn1 _outputSync
+
+foreign import _spawn :: EffectFn1 Command ChildProcess
+
+spawn :: Command -> Effect ChildProcess
+spawn = runEffectFn1 _spawn

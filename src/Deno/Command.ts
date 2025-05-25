@@ -14,3 +14,5 @@ export const _output: EffectFn3<Deno.Command, EffectFn1<Deno.CommandOutput, void
 };
 
 export const _outputSync: EffectFn1<Deno.Command, Deno.CommandOutput> = (command) => command.outputSync();
+
+export const _spawn: EffectFn1<Deno.Command, Deno.ChildProcess> = (command) => command.spawn();
