@@ -1,29 +1,19 @@
 module Deno
   ( SymlinkType(..)
-  , chdir
   , chmod
   , chown
   , consoleSize
   , copyFile
   , create
-  , cwd
-  , execPath
-  , exit
-  , gid
-  , hostname
   , link
   , mkdir
   , open
-  , osRelease
-  , osUptime
   , readTextFile
   , remove
   , rename
   , symlink
   , truncate
-  , uid
   , umask
-  , unrefTimer
   , writeTextFile
   ) where
 
@@ -33,7 +23,6 @@ import Data.Either (Either(..))
 import Data.IsStringOrUrl (class IsStringOrUrl, StringOrUrl, toStringOrUrl)
 import Data.Maybe (Maybe)
 import Data.Nullable (Nullable, toNullable)
-import Data.Nullable as Nullable
 import Deno.FsFile (FsFile)
 import Deno.MkdirOptions (MkdirOptions)
 import Deno.OpenOptions (OpenOptions)
@@ -41,12 +30,6 @@ import Deno.WriteFileOptions (WriteFileOptions)
 import Effect (Effect)
 import Effect.Aff (Aff, Error, makeAff)
 import Effect.Uncurried (EffectFn1, EffectFn3, EffectFn4, EffectFn5, mkEffectFn1, runEffectFn1, runEffectFn3, runEffectFn4, runEffectFn5)
-
-
-foreign import _chdir :: EffectFn1 StringOrUrl Unit
-
-chdir :: forall a. IsStringOrUrl a => a -> Effect Unit
-chdir path = runEffectFn1 _chdir $ toStringOrUrl path
 
 foreign import _chmod :: EffectFn4 StringOrUrl Int (Effect Unit) (EffectFn1 Error Unit) Unit
 
@@ -90,22 +73,6 @@ create path = makeAff \cb ->
   in
     runEffectFn3 _create (toStringOrUrl path) (mkEffectFn1 onSuccess) (mkEffectFn1 onFailure) *> mempty
 
-foreign import cwd :: Effect String
-
-foreign import execPath :: Effect String
-
-foreign import _exit :: EffectFn1 Int Unit
-
-exit :: Int -> Effect Unit
-exit code = runEffectFn1 _exit code
-
-foreign import _gid :: Effect (Nullable Int)
-
-gid :: Effect (Maybe Int)
-gid = Nullable.toMaybe <$> _gid
-
-foreign import hostname :: Effect String
-
 foreign import _link :: EffectFn4 String String (Effect Unit) (EffectFn1 Error Unit) Unit
 
 link :: String -> String -> Aff Unit
@@ -135,10 +102,6 @@ open opts path = makeAff \cb ->
     onFailure = cb <<< Left
   in
     runEffectFn4 _open opts (toStringOrUrl path) (mkEffectFn1 onSuccess) (mkEffectFn1 onFailure) *> mempty
-
-foreign import osRelease :: Effect String
-
-foreign import osUptime :: Effect Number
 
 foreign import _readTextFile :: EffectFn3 StringOrUrl (EffectFn1 String Unit) (EffectFn1 Error Unit) Unit
 
@@ -200,20 +163,10 @@ truncate size file = makeAff \cb ->
   in
     runEffectFn4 _truncate file size' onSuccess (mkEffectFn1 onFailure) *> mempty
 
-foreign import _uid :: Effect (Nullable Int)
-
-uid :: Effect (Maybe Int)
-uid = Nullable.toMaybe <$> _uid
-
 foreign import _umask :: EffectFn1 (Nullable Int) Int
 
 umask :: Maybe Int -> Effect Int
 umask mask = runEffectFn1 _umask (toNullable mask)
-
-foreign import _unrefTimer :: EffectFn1 Int Unit
-
-unrefTimer :: Int -> Effect Unit
-unrefTimer timerId = runEffectFn1 _unrefTimer timerId
 
 foreign import _writeTextFile :: EffectFn5 WriteFileOptions String String (Effect Unit) (EffectFn1 Error Unit) Unit
 

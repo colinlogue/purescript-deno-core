@@ -22,6 +22,4 @@ workspace:
   extraPackages:
     spec-deno:
       git: https://github.com/colinlogue/purescript-spec-deno.git
-      ref: 607e1e17f799444f614162c70ac764feabacc93d
-    deno-core:
-      path: .
+      ref: f3590752c6177c10518f86f73c411279320f72e1

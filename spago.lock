@@ -98,7 +98,6 @@
             "ansi",
             "argonaut-codecs",
             "argonaut-core",
-            "arraybuffer",
             "arraybuffer-types",
             "arrays",
             "avar",
@@ -109,7 +108,6 @@
             "contravariant",
             "control",
             "datetime",
-            "deno-core",
             "distributive",
             "effect",
             "either",
@@ -117,7 +115,6 @@
             "exceptions",
             "exists",
             "exitcodes",
-            "float32",
             "foldable-traversable",
             "foreign",
             "foreign-object",
@@ -130,7 +127,6 @@
             "integers",
             "invariant",
             "js-date",
-            "js-promise",
             "lazy",
             "lists",
             "maybe",
@@ -168,11 +164,8 @@
             "tuples",
             "type-equality",
             "typelevel-prelude",
-            "uint",
             "unfoldable",
-            "unsafe-coerce",
-            "web-streams",
-            "web-url"
+            "unsafe-coerce"
           ]
         }
       }
@@ -720,12 +713,9 @@
       }
     },
     "extra_packages": {
-      "deno-core": {
-        "path": "."
-      },
       "spec-deno": {
         "git": "https://github.com/colinlogue/purescript-spec-deno.git",
-        "ref": "607e1e17f799444f614162c70ac764feabacc93d"
+        "ref": "f3590752c6177c10518f86f73c411279320f72e1"
       }
     }
   },
@@ -945,22 +935,6 @@
         "partial",
         "prelude",
         "tuples"
-      ]
-    },
-    "deno-core": {
-      "type": "local",
-      "path": ".",
-      "dependencies": [
-        "aff",
-        "arraybuffer",
-        "console",
-        "effect",
-        "either",
-        "js-fetch",
-        "nullable",
-        "prelude",
-        "web-streams",
-        "web-url"
       ]
     },
     "distributive": {
@@ -1684,7 +1658,7 @@
     "spec-deno": {
       "type": "git",
       "url": "https://github.com/colinlogue/purescript-spec-deno.git",
-      "rev": "607e1e17f799444f614162c70ac764feabacc93d",
+      "rev": "f3590752c6177c10518f86f73c411279320f72e1",
       "dependencies": [
         "aff",
         "argonaut-codecs",
@@ -1692,7 +1666,6 @@
         "arrays",
         "control",
         "datetime",
-        "deno-core",
         "effect",
         "either",
         "foldable-traversable",

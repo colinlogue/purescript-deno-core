@@ -2,15 +2,15 @@ module Test.Deno where
 
 import Prelude
 
-import Data.String as String
-import Deno as Deno
+import Deno (create, mkdir, readTextFile, remove, writeTextFile) as Deno
 import Deno.FsFile as FsFile
 import Deno.MkdirOptions as MkdirOptions
+import Deno.Runtime (chdir, cwd) as Deno
 import Deno.WriteFileOptions as WriteFileOptions
 import Effect (Effect)
 import Effect.Class (liftEffect)
 import Test.Spec (Spec, describe, it)
-import Test.Spec.Assertions (shouldSatisfy, shouldEqual, shouldNotEqual)
+import Test.Spec.Assertions (shouldEqual, shouldNotEqual)
 import Web.Streams.WritableStream as WritableStream
 
 foreign import stdoutIsTerminal :: Effect Boolean
@@ -18,21 +18,6 @@ foreign import stdoutIsTerminal :: Effect Boolean
 spec :: Spec Unit
 spec = do
   describe "Deno Core" do
-    describe "Basic system information" do
-      it "should get current working directory" do
-        cwd <- liftEffect Deno.cwd
-        cwd `shouldSatisfy` (\s -> String.length s > 0)
-
-      it "should get executable path" do
-        execPath <- liftEffect Deno.execPath
-        execPath `shouldSatisfy` String.contains (String.Pattern "deno")
-
-      it "should get console size" do
-        liftEffect stdoutIsTerminal >>= flip when do
-          size <- liftEffect Deno.consoleSize
-          size.columns `shouldSatisfy` (_ > 0)
-          size.rows `shouldSatisfy` (_ > 0)
-
     describe "File operations" do
       it "should write and read text files" do
         let testContent = "Hello from PureScript Deno bindings!"
