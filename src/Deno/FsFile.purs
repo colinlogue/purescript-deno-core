@@ -6,6 +6,7 @@ module Deno.FsFile
   , isTerminal
   , lock
   , lockSync
+  , read
   , seek
   , SeekMode
   , seekStart
@@ -22,7 +23,7 @@ import Prelude
 import Data.ArrayBuffer.Types (Uint8Array)
 import Data.Either (Either(..))
 import Data.Maybe (Maybe)
-import Data.Nullable (Nullable, toNullable)
+import Data.Nullable (Nullable, toNullable, toMaybe)
 import Effect (Effect)
 import Effect.Aff (Aff, makeAff)
 import Effect.Exception (Error)
@@ -71,6 +72,16 @@ foreign import _lockSync :: EffectFn2 FsFile Boolean Unit
 
 lockSync :: Boolean -> FsFile -> Effect Unit
 lockSync blocking file = runEffectFn2 _lockSync file blocking
+
+foreign import _read :: EffectFn4 Uint8Array FsFile (EffectFn1 (Nullable Int) Unit) (EffectFn1 Error Unit) Unit
+
+read :: Uint8Array -> FsFile -> Aff (Maybe Int)
+read buffer file = makeAff \cb ->
+  let
+    onSuccess = cb <<< Right <<< toMaybe
+    onFailure = cb <<< Left
+  in
+    runEffectFn4 _read buffer file (mkEffectFn1 onSuccess) (mkEffectFn1 onFailure) *> mempty
 
 foreign import _seek :: EffectFn5 Int SeekMode FsFile (Effect Unit) (EffectFn1 Error Unit) Unit
 

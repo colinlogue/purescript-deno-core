@@ -30,6 +30,18 @@ export const _lockSync: EffectFn2<Deno.FsFile, boolean, void> = (file, exclusive
   file.lockSync(exclusive);
 };
 
+export const _read: EffectFn4<
+  Uint8Array,
+  Deno.FsFile,
+  EffectFn1<number | null, void>,
+  EffectFn1<Error, void>,
+  void
+> = (buffer, file, onSuccess, onError) => {
+  file.read(buffer)
+    .then(onSuccess)
+    .catch(onError);
+};
+
 export const seekStart: Deno.SeekMode = Deno.SeekMode.Start;
 
 export const seekCurrent: Deno.SeekMode = Deno.SeekMode.Current;
