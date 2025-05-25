@@ -1,4 +1,20 @@
-module Deno.FsFile where
+module Deno.FsFile
+  ( FsFile
+  , readable
+  , writable
+  , close
+  , isTerminal
+  , lock
+  , lockSync
+  , seek
+  , SeekMode
+  , seekStart
+  , seekCurrent
+  , seekEnd
+  , sync
+  , truncate
+  , unlock
+  ) where
 
 import Prelude
 
@@ -9,7 +25,7 @@ import Data.Nullable (Nullable, toNullable)
 import Effect (Effect)
 import Effect.Aff (Aff, makeAff)
 import Effect.Exception (Error)
-import Effect.Uncurried (EffectFn1, EffectFn3, EffectFn4, EffectFn5, mkEffectFn1, runEffectFn1, runEffectFn3, runEffectFn4, runEffectFn5)
+import Effect.Uncurried (EffectFn1, EffectFn2, EffectFn3, EffectFn4, EffectFn5, mkEffectFn1, runEffectFn1, runEffectFn2, runEffectFn3, runEffectFn4, runEffectFn5)
 import Web.Streams.ReadableStream (ReadableStream)
 import Web.Streams.WritableStream (WritableStream)
 
@@ -49,6 +65,11 @@ lock blocking file = makeAff \cb ->
     onFailure = cb <<< Left
   in
     runEffectFn4 _lock file blocking onSuccess (mkEffectFn1 onFailure) *> mempty
+
+foreign import _lockSync :: EffectFn2 FsFile Boolean Unit
+
+lockSync :: Boolean -> FsFile -> Effect Unit
+lockSync blocking file = runEffectFn2 _lockSync file blocking
 
 foreign import _seek :: EffectFn5 Int SeekMode FsFile (Effect Unit) (EffectFn1 Error Unit) Unit
 

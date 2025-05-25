@@ -1,5 +1,6 @@
 import type {
   EffectFn1,
+  EffectFn2,
   EffectFn3,
   EffectFn4,
   EffectFn5,
@@ -23,6 +24,10 @@ export const _lock: EffectFn4<
   file.lock(exclusive)
     .then(onSuccess)
     .catch(onError);
+};
+
+export const _lockSync: EffectFn2<Deno.FsFile, boolean, void> = (file, exclusive) => {
+  file.lockSync(exclusive);
 };
 
 export const seekStart: Deno.SeekMode = Deno.SeekMode.Start;
