@@ -4,7 +4,7 @@ import Prelude
 
 import Data.ArrayBuffer.Types (Uint8Array)
 import Data.Maybe (Maybe(..))
-import Deno as Deno
+import Deno.FileSystem as Deno
 import Deno.FsFile as FsFile
 import Effect.Class (liftEffect)
 import Test.Spec (Spec, describe, it)

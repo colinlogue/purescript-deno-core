@@ -3,7 +3,7 @@ module Test.Deno.FileInfo where
 import Prelude
 
 import Data.Maybe (Maybe(..))
-import Deno as Deno
+import Deno.FileSystem as Deno
 import Deno.FileInfo as FileInfo
 import Deno.FsFile as FsFile
 import Deno.OpenOptions as OpenOptions
