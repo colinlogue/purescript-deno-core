@@ -11,6 +11,8 @@ module Deno.Runtime
   , osRelease
   , osUptime
   , refTimer
+  , systemMemoryInfo
+  , SystemMemoryInfoResult
   , uid
   , unrefTimer
   , addSignalListener
@@ -41,6 +43,16 @@ type MemoryUsageResult =
   , heapTotal :: Number
   , heapUsed :: Number
   , external :: Number
+  }
+
+type SystemMemoryInfoResult =
+  { total :: Number
+  , free :: Number
+  , available :: Number
+  , buffers :: Number
+  , cached :: Number
+  , swapTotal :: Number
+  , swapFree :: Number
   }
 
 foreign import _chdir :: EffectFn1 StringOrUrl Unit
@@ -77,6 +89,11 @@ memoryUsage = _memoryUsage
 foreign import osRelease :: Effect String
 
 foreign import osUptime :: Effect Number
+
+foreign import _systemMemoryInfo :: Effect SystemMemoryInfoResult
+
+systemMemoryInfo :: Effect SystemMemoryInfoResult
+systemMemoryInfo = _systemMemoryInfo
 
 foreign import _uid :: Effect (Nullable Int)
 

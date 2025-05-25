@@ -4,7 +4,7 @@ import Prelude
 
 import Data.String as String
 import Deno (consoleSize) as Deno
-import Deno.Runtime (chdir, cwd, execPath, loadavg, memoryUsage, addSignalListener, removeSignalListener, LoadAvgResult(..)) as Deno
+import Deno.Runtime (chdir, cwd, execPath, loadavg, memoryUsage, systemMemoryInfo, addSignalListener, removeSignalListener, refTimer, unrefTimer, LoadAvgResult(..)) as Deno
 import Deno.Runtime.Signal (Signal(..))
 import Effect (Effect)
 import Effect.Class (liftEffect)
@@ -50,6 +50,23 @@ spec = do
         -- heapUsed should not exceed heapTotal
         usage.heapUsed `shouldSatisfy` (_ <= usage.heapTotal)
 
+      it "should get system memory information" do
+        sysMemInfo <- liftEffect Deno.systemMemoryInfo
+        -- All memory values should be non-negative numbers
+        sysMemInfo.total `shouldSatisfy` (_ >= 0.0)
+        sysMemInfo.free `shouldSatisfy` (_ >= 0.0)
+        sysMemInfo.available `shouldSatisfy` (_ >= 0.0)
+        sysMemInfo.buffers `shouldSatisfy` (_ >= 0.0)
+        sysMemInfo.cached `shouldSatisfy` (_ >= 0.0)
+        sysMemInfo.swapTotal `shouldSatisfy` (_ >= 0.0)
+        sysMemInfo.swapFree `shouldSatisfy` (_ >= 0.0)
+        -- Free memory should not exceed total memory
+        sysMemInfo.free `shouldSatisfy` (_ <= sysMemInfo.total)
+        -- Available memory should not exceed total memory
+        sysMemInfo.available `shouldSatisfy` (_ <= sysMemInfo.total)
+        -- Free swap should not exceed total swap
+        sysMemInfo.swapFree `shouldSatisfy` (_ <= sysMemInfo.swapTotal)
+
     describe "Directory operations" do
       it "should change working directory" do
         -- Test that we can change to /tmp and back
@@ -72,5 +89,14 @@ spec = do
 
         liftEffect $ Deno.addSignalListener SIGINT handler
         liftEffect $ Deno.removeSignalListener SIGINT handler
+
+        pure unit
+
+    describe "Timer operations" do
+      it "should handle timer reference operations" do
+        -- Test that refTimer and unrefTimer can be called without errors
+        -- We create a timer and test both ref and unref operations
+        liftEffect $ Deno.refTimer 123  -- Using arbitrary timer ID for testing
+        liftEffect $ Deno.unrefTimer 123
 
         pure unit

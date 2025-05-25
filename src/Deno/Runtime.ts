@@ -41,8 +41,16 @@ export const osUptime = (): number => {
   return Deno.osUptime();
 };
 
+export const _systemMemoryInfo = () => {
+  return Deno.systemMemoryInfo();
+};
+
 export const _uid = (): number | null => {
   return Deno.uid();
+};
+
+export const _refTimer: EffectFn1<number, void> = (timerId) => {
+  Deno.refTimer(timerId);
 };
 
 export const _unrefTimer: EffectFn1<number, void> = (timerId) => {
