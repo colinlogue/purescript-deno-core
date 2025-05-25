@@ -8,10 +8,9 @@ module Deno.Command
 
 import Prelude
 
-import Data.ArrayBuffer.Types (Uint8Array)
 import Data.Either (Either(..))
 import Data.IsStringOrUrl (class IsStringOrUrl, StringOrUrl, toStringOrUrl)
-import Deno.ChildProcess (ChildProcess)
+import Deno.ChildProcess (ChildProcess, CommandOutput)
 import Deno.CommandOptions (CommandOptions)
 import Effect (Effect)
 import Effect.Aff (Aff, makeAff)
@@ -26,11 +25,6 @@ new :: forall a. IsStringOrUrl a => CommandOptions -> a -> Effect Command
 new opts command = runEffectFn2 _new opts (toStringOrUrl command)
 
 -- Methods
-
-type CommandOutput =
-  { stdout :: Uint8Array
-  , stderr :: Uint8Array
-  }
 
 foreign import _output :: EffectFn3 Command (EffectFn1 CommandOutput Unit) (EffectFn1 Error Unit) Unit
 
