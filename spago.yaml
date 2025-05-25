@@ -6,6 +6,7 @@ package:
     - console
     - effect
     - either
+    - js-fetch
     - nullable
     - prelude
     - web-streams
