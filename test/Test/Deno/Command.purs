@@ -5,6 +5,7 @@ import Prelude
 import Control.Monad.Trans.Class (lift)
 import Data.ArrayBuffer.Typed as Typed
 import Data.ArrayBuffer.Types (Uint8Array)
+import Data.Maybe (Maybe(..))
 import Data.String as String
 import Deno.ChildProcess as ChildProcess
 import Deno.Command as Command
@@ -310,3 +311,15 @@ spec = do
         childProcess <- liftEffect $ Command.spawn cmd
         let pid = ChildProcess.pid childProcess
         pid `shouldSatisfy` (_ > 0)
+
+      it "should wait for child process status" do
+        let opts = CommandOptions.args ["hello", "world"]
+        cmd <- liftEffect $ Command.new opts "echo"
+        childProcess <- liftEffect $ Command.spawn cmd
+        status <- ChildProcess.status childProcess
+
+        -- The echo command should succeed
+        status.success `shouldEqual` true
+        status.code `shouldEqual` 0
+        -- For a normal exit, signal should be Nothing
+        status.signal `shouldEqual` Nothing

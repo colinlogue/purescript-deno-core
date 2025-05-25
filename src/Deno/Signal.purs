@@ -1,0 +1,85 @@
+module Deno.Signal
+  ( Signal(..)
+  ) where
+
+import Prelude
+
+data Signal
+  = SIGABRT
+  | SIGALRM
+  | SIGBREAK
+  | SIGBUS
+  | SIGCHLD
+  | SIGCONT
+  | SIGEMT
+  | SIGFPE
+  | SIGHUP
+  | SIGILL
+  | SIGINFO
+  | SIGINT
+  | SIGIO
+  | SIGPOLL
+  | SIGUNUSED
+  | SIGKILL
+  | SIGPIPE
+  | SIGPROF
+  | SIGPWR
+  | SIGQUIT
+  | SIGSEGV
+  | SIGSTKFLT
+  | SIGSTOP
+  | SIGSYS
+  | SIGTERM
+  | SIGTRAP
+  | SIGTSTP
+  | SIGTTIN
+  | SIGTTOU
+  | SIGURG
+  | SIGUSR1
+  | SIGUSR2
+  | SIGVTALRM
+  | SIGWINCH
+  | SIGXCPU
+  | SIGXFSZ
+
+derive instance Eq Signal
+derive instance Ord Signal
+
+instance Show Signal where
+  show = case _ of
+    SIGABRT -> "SIGABRT"
+    SIGALRM -> "SIGALRM"
+    SIGBREAK -> "SIGBREAK"
+    SIGBUS -> "SIGBUS"
+    SIGCHLD -> "SIGCHLD"
+    SIGCONT -> "SIGCONT"
+    SIGEMT -> "SIGEMT"
+    SIGFPE -> "SIGFPE"
+    SIGHUP -> "SIGHUP"
+    SIGILL -> "SIGILL"
+    SIGINFO -> "SIGINFO"
+    SIGINT -> "SIGINT"
+    SIGIO -> "SIGIO"
+    SIGPOLL -> "SIGPOLL"
+    SIGUNUSED -> "SIGUNUSED"
+    SIGKILL -> "SIGKILL"
+    SIGPIPE -> "SIGPIPE"
+    SIGPROF -> "SIGPROF"
+    SIGPWR -> "SIGPWR"
+    SIGQUIT -> "SIGQUIT"
+    SIGSEGV -> "SIGSEGV"
+    SIGSTKFLT -> "SIGSTKFLT"
+    SIGSTOP -> "SIGSTOP"
+    SIGSYS -> "SIGSYS"
+    SIGTERM -> "SIGTERM"
+    SIGTRAP -> "SIGTRAP"
+    SIGTSTP -> "SIGTSTP"
+    SIGTTIN -> "SIGTTIN"
+    SIGTTOU -> "SIGTTOU"
+    SIGURG -> "SIGURG"
+    SIGUSR1 -> "SIGUSR1"
+    SIGUSR2 -> "SIGUSR2"
+    SIGVTALRM -> "SIGVTALRM"
+    SIGWINCH -> "SIGWINCH"
+    SIGXCPU -> "SIGXCPU"
+    SIGXFSZ -> "SIGXFSZ"
