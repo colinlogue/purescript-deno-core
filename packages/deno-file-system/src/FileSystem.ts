@@ -171,3 +171,27 @@ export const _writeTextFile: EffectFn5<
     .then(onSuccess)
     .catch(onError);
 };
+
+export const _readFile: EffectFn3<
+  string | URL,
+  EffectFn1<Uint8Array, void>,
+  EffectFn1<Error, void>,
+  void
+> = (path, onSuccess, onError) => {
+  Deno.readFile(path)
+    .then(onSuccess)
+    .catch(onError);
+};
+
+export const _writeFile: EffectFn5<
+  Deno.WriteFileOptions,
+  string | URL,
+  Uint8Array,
+  () => void,
+  EffectFn1<Error, void>,
+  void
+> = (opts, path, data, onSuccess, onError) => {
+  Deno.writeFile(path, data, opts)
+    .then(onSuccess)
+    .catch(onError);
+};

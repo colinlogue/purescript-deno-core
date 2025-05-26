@@ -7,17 +7,20 @@ module Deno.FileSystem
   , link
   , mkdir
   , open
+  , readFile
   , readTextFile
   , remove
   , rename
   , symlink
   , truncate
   , umask
+  , writeFile
   , writeTextFile
   ) where
 
 import Prelude
 
+import Data.ArrayBuffer.Types (Uint8Array)
 import Data.Either (Either(..))
 import Data.IsStringOrUrl (class IsStringOrUrl, StringOrUrl, toStringOrUrl)
 import Data.Maybe (Maybe)
@@ -100,6 +103,16 @@ open opts path = makeAff \cb ->
   in
     runEffectFn4 _open opts (toStringOrUrl path) (mkEffectFn1 onSuccess) (mkEffectFn1 onFailure) *> mempty
 
+foreign import _readFile :: EffectFn3 StringOrUrl (EffectFn1 Uint8Array Unit) (EffectFn1 Error Unit) Unit
+
+readFile :: forall a. IsStringOrUrl a => a -> Aff Uint8Array
+readFile path = makeAff \cb ->
+  let
+    onSuccess = cb <<< Right
+    onFailure = cb <<< Left
+  in
+    runEffectFn3 _readFile (toStringOrUrl path) (mkEffectFn1 onSuccess) (mkEffectFn1 onFailure) *> mempty
+
 foreign import _readTextFile :: EffectFn3 StringOrUrl (EffectFn1 String Unit) (EffectFn1 Error Unit) Unit
 
 readTextFile :: forall a. IsStringOrUrl a => a -> Aff String
@@ -164,6 +177,16 @@ foreign import _umask :: EffectFn1 (Nullable Int) Int
 
 umask :: Maybe Int -> Effect Int
 umask mask = runEffectFn1 _umask (toNullable mask)
+
+foreign import _writeFile :: EffectFn5 WriteFileOptions StringOrUrl Uint8Array (Effect Unit) (EffectFn1 Error Unit) Unit
+
+writeFile :: forall a. IsStringOrUrl a => WriteFileOptions -> a -> Uint8Array -> Aff Unit
+writeFile opts path content = makeAff \cb ->
+  let
+    onSuccess = cb (Right unit)
+    onFailure = cb <<< Left
+  in
+    runEffectFn5 _writeFile opts (toStringOrUrl path) content onSuccess (mkEffectFn1 onFailure) *> mempty
 
 foreign import _writeTextFile :: EffectFn5 WriteFileOptions String String (Effect Unit) (EffectFn1 Error Unit) Unit
 
