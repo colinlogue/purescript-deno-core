@@ -16,6 +16,7 @@ PureScript bindings for the [Deno HTTP Server API](https://docs.deno.com/api/den
 import Prelude
 
 import Deno.HttpServer as HttpServer
+import Deno.HttpServer.Response as Response
 import Effect.Aff (launchAff_)
 import Effect.Class (liftEffect)
 import Effect.Console (log)
@@ -26,9 +27,9 @@ main = launchAff_ do
         , hostname: "localhost"
         , handler: \req -> do
             -- Handle request and return Response
-            pure $ new Response("Hello from Deno HTTP server!")
+            liftEffect $ Response.text "Hello from Deno HTTP server!"
         , onListen: \info -> log $ "Server listening on " <> info.hostname <> ":" <> show info.port
-        , onError: \err -> new Response("Server error", { status: 500 })
+        , onError: \err -> liftEffect $ Response.text "Server error" -- In a real app, would return appropriate error response
         , signal: abortController.signal
         }
   
