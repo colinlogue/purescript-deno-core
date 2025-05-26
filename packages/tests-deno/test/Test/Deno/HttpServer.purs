@@ -4,18 +4,17 @@ import Prelude
 
 import Data.Maybe (Maybe(..))
 import Deno.HttpServer as HttpServer
-import Effect (Effect)
 import Effect.Aff (Aff)
 import JS.Fetch.Request (Request)
 import JS.Fetch.Response (Response)
 import Test.Spec (Spec, describe, it)
-import Test.Spec.Assertions (shouldEqual)
+import Test.Spec.Assertions (shouldEqual, shouldNotEqual)
 
 -- FFI to create a Response
 foreign import createResponse :: String -> Response
 
--- FFI for server.shutdown()
-foreign import serverShutdown :: forall a. a -> Effect Unit
+-- FFI to get response status
+foreign import getResponseStatus :: Response -> Int
 
 -- Mock handler that always returns a 200 OK response with "Hello, World!" text
 mockHandler :: forall a. a -> Request -> Aff Response
@@ -29,8 +28,13 @@ spec = describe "Deno.HttpServer" do
       let _ = (Nothing :: Maybe (HttpServer.HttpServer Unit))
       true `shouldEqual` true
 
+  describe "HTTP Response" do
+    it "can create a Response with default status" do
+      let response = createResponse "Hello, World!"
+      getResponseStatus response `shouldEqual` 200
+
   describe "serveNet" do
-    it "can create a server with default options" do
+    it "exports a serveNet function" do
       -- Just verify the function exists and has the expected type
       let _ = HttpServer.serveNet
       true `shouldEqual` true

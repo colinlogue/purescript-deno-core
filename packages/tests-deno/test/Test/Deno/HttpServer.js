@@ -3,7 +3,7 @@ export function createResponse(text) {
   return new Response(text);
 }
 
-// Function to call server.shutdown() 
-export function serverShutdown(server) {
-  server.shutdown();
+// Function to get response status
+export function getResponseStatus(response) {
+  return response.status;
 }
