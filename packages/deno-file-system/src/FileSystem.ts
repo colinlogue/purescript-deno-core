@@ -275,3 +275,34 @@ export const _dirEntryIsDirectory: EffectFn1<Deno.DirEntry, boolean> = (entry) =
 export const _dirEntryIsSymlink: EffectFn1<Deno.DirEntry, boolean> = (entry) => {
   return entry.isSymlink;
 };
+
+// Temporary directory and file creation functions
+export const _makeTempDir: EffectFn3<
+  Deno.MakeTempOptions,
+  EffectFn1<string, void>,
+  EffectFn1<Error, void>,
+  void
+> = (options, onSuccess, onError) => {
+  Deno.makeTempDir(options)
+    .then(onSuccess)
+    .catch(onError);
+};
+
+export const _makeTempDirSync: EffectFn1<Deno.MakeTempOptions, string> = (options) => {
+  return Deno.makeTempDirSync(options);
+};
+
+export const _makeTempFile: EffectFn3<
+  Deno.MakeTempOptions,
+  EffectFn1<string, void>,
+  EffectFn1<Error, void>,
+  void
+> = (options, onSuccess, onError) => {
+  Deno.makeTempFile(options)
+    .then(onSuccess)
+    .catch(onError);
+};
+
+export const _makeTempFileSync: EffectFn1<Deno.MakeTempOptions, string> = (options) => {
+  return Deno.makeTempFileSync(options);
+};
