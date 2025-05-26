@@ -4,7 +4,6 @@ module Deno.HttpServer
   , ConnInfo
   , Server
   , Handler
-  , Request
   , Error
   , AbortSignal
   , serve
@@ -25,6 +24,7 @@ import Deno.HttpServer.Foreign (Foreign, unsafeToForeign)
 import Effect (Effect)
 import Effect.Aff (Aff)
 import Effect.Uncurried (EffectFn1, EffectFn2, runEffectFn1, runEffectFn2)
+import Web.Fetch.Request (Request)
 import Web.Fetch.Response (Response)
 
 -- | Type for HTTP request handler function
@@ -62,8 +62,7 @@ type ConnInfo =
 -- | HTTP server instance type
 foreign import data Server :: Type
 
--- | HTTP request type (from Web API)
-foreign import data Request :: Type
+
 
 -- | Signal for aborting operations (from Web API)
 foreign import data AbortSignal :: Type
