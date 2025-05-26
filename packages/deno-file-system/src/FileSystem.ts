@@ -195,3 +195,83 @@ export const _writeFile: EffectFn5<
     .then(onSuccess)
     .catch(onError);
 };
+
+// Additional file system operations
+
+export const _readDir: EffectFn3<
+  string | URL,
+  EffectFn1<Deno.DirEntry[], void>,
+  EffectFn1<Error, void>,
+  void
+> = async (path, onSuccess, onError) => {
+  try {
+    const entries: Deno.DirEntry[] = [];
+    for await (const entry of Deno.readDir(path)) {
+      entries.push(entry);
+    }
+    onSuccess(entries);
+  } catch (error) {
+    onError(error as Error);
+  }
+};
+
+export const _stat: EffectFn3<
+  string | URL,
+  EffectFn1<Deno.FileInfo, void>,
+  EffectFn1<Error, void>,
+  void
+> = (path, onSuccess, onError) => {
+  Deno.stat(path)
+    .then(onSuccess)
+    .catch(onError);
+};
+
+export const _lstat: EffectFn3<
+  string | URL,
+  EffectFn1<Deno.FileInfo, void>,
+  EffectFn1<Error, void>,
+  void
+> = (path, onSuccess, onError) => {
+  Deno.lstat(path)
+    .then(onSuccess)
+    .catch(onError);
+};
+
+export const _realPath: EffectFn3<
+  string | URL,
+  EffectFn1<string, void>,
+  EffectFn1<Error, void>,
+  void
+> = (path, onSuccess, onError) => {
+  Deno.realPath(path)
+    .then(onSuccess)
+    .catch(onError);
+};
+
+export const _readLink: EffectFn3<
+  string | URL,
+  EffectFn1<string, void>,
+  EffectFn1<Error, void>,
+  void
+> = (path, onSuccess, onError) => {
+  Deno.readLink(path)
+    .then(onSuccess)
+    .catch(onError);
+};
+
+// DirEntry accessor functions
+export const _dirEntryName: EffectFn1<Deno.DirEntry, string> = (entry) => {
+  return entry.name;
+};
+
+export const _dirEntryIsFile: EffectFn1<Deno.DirEntry, boolean> = (entry) => {
+  return entry.isFile;
+};
+
+export const _dirEntryIsDirectory: EffectFn1<Deno.DirEntry, boolean> = (entry) => {
+  return entry.isDirectory;
+};
+
+export const _dirEntryIsSymlink: EffectFn1<Deno.DirEntry, boolean> = (entry) => {
+  return entry.isSymlink;
+};

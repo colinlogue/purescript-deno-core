@@ -1,16 +1,26 @@
 module Deno.FileSystem
   ( SymlinkType(..)
+  , DirEntry
   , chmod
   , chown
   , copyFile
   , create
+  , dirEntryIsDirectory
+  , dirEntryIsFile
+  , dirEntryIsSymlink
+  , dirEntryName
   , link
+  , lstat
   , mkdir
   , open
+  , readDir
   , readFile
+  , readLink
   , readTextFile
+  , realPath
   , remove
   , rename
+  , stat
   , symlink
   , truncate
   , umask
@@ -25,6 +35,7 @@ import Data.Either (Either(..))
 import Data.IsStringOrUrl (class IsStringOrUrl, StringOrUrl, toStringOrUrl)
 import Data.Maybe (Maybe)
 import Data.Nullable (Nullable, toNullable)
+import Deno.FileSystem.FileInfo (FileInfo)
 import Deno.FileSystem.FsFile (FsFile)
 import Deno.FileSystem.MkdirOptions (MkdirOptions)
 import Deno.FileSystem.OpenOptions (OpenOptions)
@@ -197,3 +208,76 @@ writeTextFile opts path content = makeAff \cb ->
     onFailure = cb <<< Left
   in
     runEffectFn5 _writeTextFile opts path content onSuccess (mkEffectFn1 onFailure) *> mempty
+
+-- Additional file system operations
+
+-- Directory reading with simple DirEntry representation
+foreign import data DirEntry :: Type
+
+foreign import _readDir :: EffectFn3 StringOrUrl (EffectFn1 (Array DirEntry) Unit) (EffectFn1 Error Unit) Unit
+
+readDir :: forall a. IsStringOrUrl a => a -> Aff (Array DirEntry)
+readDir path = makeAff \cb ->
+  let
+    onSuccess = cb <<< Right
+    onFailure = cb <<< Left
+  in
+    runEffectFn3 _readDir (toStringOrUrl path) (mkEffectFn1 onSuccess) (mkEffectFn1 onFailure) *> mempty
+
+foreign import _stat :: EffectFn3 StringOrUrl (EffectFn1 FileInfo Unit) (EffectFn1 Error Unit) Unit
+
+stat :: forall a. IsStringOrUrl a => a -> Aff FileInfo
+stat path = makeAff \cb ->
+  let
+    onSuccess = cb <<< Right
+    onFailure = cb <<< Left
+  in
+    runEffectFn3 _stat (toStringOrUrl path) (mkEffectFn1 onSuccess) (mkEffectFn1 onFailure) *> mempty
+
+foreign import _lstat :: EffectFn3 StringOrUrl (EffectFn1 FileInfo Unit) (EffectFn1 Error Unit) Unit
+
+lstat :: forall a. IsStringOrUrl a => a -> Aff FileInfo
+lstat path = makeAff \cb ->
+  let
+    onSuccess = cb <<< Right
+    onFailure = cb <<< Left
+  in
+    runEffectFn3 _lstat (toStringOrUrl path) (mkEffectFn1 onSuccess) (mkEffectFn1 onFailure) *> mempty
+
+foreign import _realPath :: EffectFn3 StringOrUrl (EffectFn1 String Unit) (EffectFn1 Error Unit) Unit
+
+realPath :: forall a. IsStringOrUrl a => a -> Aff String
+realPath path = makeAff \cb ->
+  let
+    onSuccess = cb <<< Right
+    onFailure = cb <<< Left
+  in
+    runEffectFn3 _realPath (toStringOrUrl path) (mkEffectFn1 onSuccess) (mkEffectFn1 onFailure) *> mempty
+
+foreign import _readLink :: EffectFn3 StringOrUrl (EffectFn1 String Unit) (EffectFn1 Error Unit) Unit
+
+readLink :: forall a. IsStringOrUrl a => a -> Aff String
+readLink path = makeAff \cb ->
+  let
+    onSuccess = cb <<< Right
+    onFailure = cb <<< Left
+  in
+    runEffectFn3 _readLink (toStringOrUrl path) (mkEffectFn1 onSuccess) (mkEffectFn1 onFailure) *> mempty
+
+-- DirEntry accessor functions
+foreign import _dirEntryName :: EffectFn1 DirEntry String
+foreign import _dirEntryIsFile :: EffectFn1 DirEntry Boolean
+foreign import _dirEntryIsDirectory :: EffectFn1 DirEntry Boolean
+foreign import _dirEntryIsSymlink :: EffectFn1 DirEntry Boolean
+
+dirEntryName :: DirEntry -> Effect String
+dirEntryName = runEffectFn1 _dirEntryName
+
+dirEntryIsFile :: DirEntry -> Effect Boolean
+dirEntryIsFile = runEffectFn1 _dirEntryIsFile
+
+dirEntryIsDirectory :: DirEntry -> Effect Boolean
+dirEntryIsDirectory = runEffectFn1 _dirEntryIsDirectory
+
+dirEntryIsSymlink :: DirEntry -> Effect Boolean
+dirEntryIsSymlink = runEffectFn1 _dirEntryIsSymlink

@@ -2,8 +2,12 @@ module Test.Deno.FileSystem where
 
 import Prelude
 
-import Data.ArrayBuffer.Typed as Typed
-import Deno.FileSystem (create, mkdir, readFile, readTextFile, remove, writeFile, writeTextFile) as Deno
+import Data.Array (length, (!!))
+import Data.Int (toNumber)
+import Data.Maybe (Maybe(..))
+import Data.String as String
+import Deno.FileSystem (create, dirEntryIsFile, dirEntryName, lstat, mkdir, readDir, readFile, readTextFile, realPath, remove, stat, writeFile, writeTextFile) as Deno
+import Deno.FileSystem.FileInfo as FileInfo
 import Deno.FileSystem.FsFile as FsFile
 import Deno.FileSystem.MkdirOptions as MkdirOptions
 import Deno.FileSystem.WriteFileOptions as WriteFileOptions
@@ -81,3 +85,80 @@ spec = do
 
         -- Clean up
         Deno.remove true testDir
+
+    describe "New file system operations" do
+      it "should read directory entries with readDir" do
+        let testDir = "/tmp/test-readdir"
+        let testFile = testDir <> "/test-file.txt"
+
+        -- Create test directory and file
+        Deno.mkdir (MkdirOptions.recursive true) testDir
+        Deno.writeTextFile WriteFileOptions.empty testFile "test content"
+
+        -- Read directory entries
+        entries <- Deno.readDir testDir
+
+        -- Should have at least one entry (our test file)
+        let entryCount = length entries
+        entryCount `shouldEqual` 1
+
+        -- Check first entry properties
+        case entries !! 0 of
+          Just entry -> do
+            name <- liftEffect $ Deno.dirEntryName entry
+            isFile <- liftEffect $ Deno.dirEntryIsFile entry
+            name `shouldEqual` "test-file.txt"
+            isFile `shouldEqual` true
+          Nothing -> pure unit -- This shouldn't happen
+
+        -- Clean up
+        Deno.remove false testFile
+        Deno.remove true testDir
+
+      it "should get file stats with stat" do
+        let testFile = "/tmp/test-stat.txt"
+        let testContent = "test content for stat"
+
+        -- Create test file
+        Deno.writeTextFile WriteFileOptions.empty testFile testContent
+
+        -- Get file stats
+        fileStats <- Deno.stat testFile
+
+        -- Basic validation that we got stats (size should be > 0)
+        size <- liftEffect $ FileInfo.size fileStats
+        size `shouldEqual` (toNumber $ String.length testContent)
+
+        -- Clean up
+        Deno.remove false testFile
+
+      it "should get symlink stats with lstat" do
+        let testFile = "/tmp/test-lstat-target.txt"
+
+        -- Create test file
+        Deno.writeTextFile WriteFileOptions.empty testFile "target content"
+
+        -- We'll test lstat on the original file for now
+        linkStats <- Deno.lstat testFile
+
+        -- Should get valid stats
+        size <- liftEffect $ FileInfo.size linkStats
+        size `shouldEqual` 14.0 -- length of "target content"
+
+        -- Clean up
+        Deno.remove false testFile
+
+      it "should resolve real path with realPath" do
+        let testFile = "/tmp/test-realpath.txt"
+
+        -- Create test file
+        Deno.writeTextFile WriteFileOptions.empty testFile "real path test"
+
+        -- Get real path
+        resolvedPath <- Deno.realPath testFile
+
+        -- Should resolve to absolute path
+        resolvedPath `shouldEqual` testFile
+
+        -- Clean up
+        Deno.remove false testFile
