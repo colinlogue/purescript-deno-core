@@ -1,5 +1,6 @@
 import type {
   EffectFn1,
+  EffectFn2,
   EffectFn3,
   EffectFn4,
   EffectFn5,
@@ -274,4 +275,62 @@ export const _dirEntryIsDirectory: EffectFn1<Deno.DirEntry, boolean> = (entry) =
 
 export const _dirEntryIsSymlink: EffectFn1<Deno.DirEntry, boolean> = (entry) => {
   return entry.isSymlink;
+};
+
+// Temporary directory and file creation functions
+export const _makeTempDir: EffectFn3<
+  Deno.MakeTempOptions,
+  EffectFn1<string, void>,
+  EffectFn1<Error, void>,
+  void
+> = (options, onSuccess, onError) => {
+  Deno.makeTempDir(options)
+    .then(onSuccess)
+    .catch(onError);
+};
+
+export const _makeTempDirSync: EffectFn1<Deno.MakeTempOptions, string> = (options) => {
+  return Deno.makeTempDirSync(options);
+};
+
+export const _makeTempFile: EffectFn3<
+  Deno.MakeTempOptions,
+  EffectFn1<string, void>,
+  EffectFn1<Error, void>,
+  void
+> = (options, onSuccess, onError) => {
+  Deno.makeTempFile(options)
+    .then(onSuccess)
+    .catch(onError);
+};
+
+export const _makeTempFileSync: EffectFn1<Deno.MakeTempOptions, string> = (options) => {
+  return Deno.makeTempFileSync(options);
+};
+
+// File time modification functions
+export const _utime: EffectFn5<
+  string | URL,
+  number,
+  number,
+  () => void,
+  EffectFn1<Error, void>,
+  void
+> = (path, atime, mtime, onSuccess, onError) => {
+  Deno.utime(path, atime, mtime)
+    .then(onSuccess)
+    .catch(onError);
+};
+
+export const _utimeSync: EffectFn3<string | URL, number, number, void> = (path, atime, mtime) => {
+  Deno.utimeSync(path, atime, mtime);
+};
+
+// File system watching functions
+export const _watchFs: EffectFn2<
+  string | string[],
+  { recursive: boolean },
+  Deno.FsWatcher
+> = (paths, options) => {
+  return Deno.watchFs(paths, options);
 };
