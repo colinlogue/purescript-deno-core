@@ -6,11 +6,6 @@ package:
     - deno-io
     - deno-runtime
     - deno-subprocess
-  test:
-    main: Test.Main
-    dependencies:
-      - arraybuffer
-      - spec-deno
 
 workspace:
   packageSet:
