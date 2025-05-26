@@ -134,24 +134,24 @@ serveTls = serveTcp
 
 -- | Returns a promise that resolves when the server finishes processing all
 -- | pending requests and closes all connections
-foreign import _finished :: forall a. (HttpServer a) -> Effect (Promise Unit)
+foreign import _finished :: forall a. EffectFn1 (HttpServer a) (Promise Unit)
 
 -- | Returns the server's address information
 foreign import _addr :: forall a. (HttpServer a) -> a
 
 -- | Add a reference to the server to keep the event loop running
-foreign import _ref :: forall a. (HttpServer a) -> Effect Unit
+foreign import _ref :: forall a. EffectFn1 (HttpServer a) Unit
 
 -- | Remove a reference from the server, allowing the event loop to exit
-foreign import _unref :: forall a. (HttpServer a) -> Effect Unit
+foreign import _unref :: forall a. EffectFn1 (HttpServer a) Unit
 
 -- | Shuts down the server
-foreign import _shutdown :: forall a. (HttpServer a) -> Effect (Promise Unit)
+foreign import _shutdown :: forall a. EffectFn1 (HttpServer a) (Promise Unit)
 
 -- | Returns a promise that resolves when the server finishes processing all
 -- | pending requests and closes all connections
 finished :: forall a. HttpServer a -> Aff Unit
-finished server = Promise.toAff =<< liftEffect (_finished server)
+finished server = liftEffect (runEffectFn1 _finished server) >>= Promise.toAff
 
 -- | Returns the server's address information
 addr :: forall a. HttpServer a -> a
@@ -159,12 +159,12 @@ addr server = _addr server
 
 -- | Add a reference to the server to keep the event loop running
 ref :: forall a. HttpServer a -> Effect Unit
-ref server = _ref server
+ref = runEffectFn1 _ref
 
 -- | Remove a reference from the server, allowing the event loop to exit
 unref :: forall a. HttpServer a -> Effect Unit
-unref server = _unref server
+unref = runEffectFn1 _unref
 
 -- | Shuts down the server
 shutdown :: forall a. HttpServer a -> Aff Unit
-shutdown server = Promise.toAff =<< liftEffect (_shutdown server)
+shutdown server = liftEffect (runEffectFn1 _shutdown server) >>= Promise.toAff

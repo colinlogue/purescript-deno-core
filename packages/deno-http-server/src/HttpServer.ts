@@ -21,22 +21,22 @@ export const _serveTcp: EffectFn2<Deno.ServeTcpOptions | (Deno.ServeTcpOptions &
   return Deno.serve(options, handler);
 };
 
-export const _finished = (server: Deno.HttpServer<any>): Promise<void> => {
+export const _finished = (server: Deno.HttpServer): Promise<void> => {
   return server.finished;
 };
 
-export const _addr = (server: Deno.HttpServer<any>): any => {
+export const _addr = <A extends Deno.Addr>(server: Deno.HttpServer<A>): A => {
   return server.addr;
 };
 
-export const _ref = (server: Deno.HttpServer<any>): void => {
+export const _ref = (server: Deno.HttpServer): void => {
   server.ref();
 };
 
-export const _unref = (server: Deno.HttpServer<any>): void => {
+export const _unref = (server: Deno.HttpServer): void => {
   server.unref();
 };
 
-export const _shutdown = (server: Deno.HttpServer<any>): Promise<void> => {
+export const _shutdown = (server: Deno.HttpServer): Promise<void> => {
   return server.shutdown();
 };
