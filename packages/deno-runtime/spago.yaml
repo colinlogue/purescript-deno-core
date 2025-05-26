@@ -9,4 +9,11 @@ package:
     - prelude
   build:
     pedanticPackages: true
-
+  test:
+    main: Test.Main
+    dependencies:
+      - arrays
+      - deno-io
+      - refs
+      - spec-deno
+      - strings

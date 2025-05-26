@@ -4,3 +4,7 @@ package:
     - effect
   build:
     pedanticPackages: true
+  test:
+    main: Test.Main
+    dependencies:
+      - spec-deno
