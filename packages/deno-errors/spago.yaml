@@ -1,0 +1,4 @@
+package:
+  name: deno-errors
+  dependencies:
+    - exceptions

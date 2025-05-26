@@ -1,4 +1,4 @@
-import type { EffectFn1, EffectFn2, EffectFn3 } from "../../purescript.d.ts";
+import type { EffectFn1, EffectFn2, EffectFn3 } from "../../../../purescript.d.ts";
 
 export const _new: EffectFn2<Deno.CommandOptions, string | URL, Deno.Command> = (
   opts,

@@ -1,4 +1,4 @@
-import type { EffectFn1, EffectFn2, EffectFn3 } from "../../purescript.d.ts";
+import type { EffectFn1, EffectFn2, EffectFn3 } from "../../../../purescript.d.ts";
 
 export const _get: EffectFn2<Deno.Env, string, string | null> = (env: Deno.Env, key: string) => {
   return env.get(key) || null;

@@ -1,0 +1,9 @@
+package:
+  name: deno-runtime
+  dependencies:
+    - deno-shared
+    - effect
+    - foreign-object
+    - maybe
+    - nullable
+    - prelude

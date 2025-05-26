@@ -1,4 +1,4 @@
-module Deno.WriteFileOptions where
+module Deno.FileSystem.WriteFileOptions where
 
 import Prelude
 

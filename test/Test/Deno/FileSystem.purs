@@ -5,7 +5,7 @@ import Prelude
 import Deno.FileSystem (create, mkdir, readTextFile, remove, writeTextFile) as Deno
 import Deno.FileSystem.FsFile as FsFile
 import Deno.FileSystem.MkdirOptions as MkdirOptions
-import Deno.WriteFileOptions as WriteFileOptions
+import Deno.FileSystem.WriteFileOptions as WriteFileOptions
 import Effect.Class (liftEffect)
 import Test.Spec (Spec, describe, it)
 import Test.Spec.Assertions (shouldEqual)

@@ -1,4 +1,4 @@
-import type { EffectFn1, EffectFn2 } from "../purescript.d.ts";
+import type { EffectFn1, EffectFn2 } from "../../../purescript.d.ts";
 
 export const _chdir: EffectFn1<string | URL, void> = (path) => {
   Deno.chdir(path);

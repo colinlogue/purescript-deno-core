@@ -2,7 +2,7 @@ module Test.Deno where
 
 import Prelude
 
-import Deno (consoleSize) as Deno
+import Deno.IO (consoleSize) as Deno
 import Effect (Effect)
 import Effect.Class (liftEffect)
 import Test.Spec (Spec, describe, it)

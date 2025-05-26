@@ -9,7 +9,7 @@ generated-docs/
 .purs*
 .psa*
 .spago
-src/**/*.js
+packages/**/src/**/*.js
 test/**/*.js
 .vscode
 .spec-results

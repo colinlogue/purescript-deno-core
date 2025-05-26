@@ -1,19 +1,15 @@
 package:
-  name: deno-bindings
+  name: deno
   dependencies:
-    - aff
-    - arraybuffer
-    - console
-    - effect
-    - either
-    - js-fetch
-    - nullable
-    - prelude
-    - web-streams
-    - web-url
+    - deno-errors
+    - deno-file-system
+    - deno-io
+    - deno-runtime
+    - deno-subprocess
   test:
     main: Test.Main
     dependencies:
+      - arraybuffer
       - spec-deno
 
 workspace:

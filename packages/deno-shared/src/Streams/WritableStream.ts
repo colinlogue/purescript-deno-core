@@ -1,4 +1,4 @@
-import type { EffectFn1, EffectFn4 } from "../../purescript.d.ts";
+import type { EffectFn1, EffectFn4 } from "../../../../purescript.d.ts";
 
 export const _locked: EffectFn1<WritableStream<unknown>, boolean> = (stream) => {
   return stream.locked;

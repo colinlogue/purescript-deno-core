@@ -1,0 +1,14 @@
+package:
+  name: deno-subprocess
+  dependencies:
+    - aff
+    - deno-runtime
+    - deno-shared
+    - effect
+    - either
+    - exceptions
+    - functions
+    - js-fetch
+    - prelude
+    - unsafe-coerce
+    - web-streams

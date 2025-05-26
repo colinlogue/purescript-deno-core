@@ -1,0 +1,7 @@
+package:
+  name: deno-file-system
+  dependencies:
+    - aff
+    - deno-shared
+    - js-fetch
+    - nullable

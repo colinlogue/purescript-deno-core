@@ -1,4 +1,4 @@
-import type { EffectFn1, EffectFn3, EffectFn4 } from "../../purescript.d.ts";
+import type { EffectFn1, EffectFn3, EffectFn4 } from "../../../../purescript.d.ts";
 
 export const _write: EffectFn4<
   WritableStreamDefaultWriter<unknown>,

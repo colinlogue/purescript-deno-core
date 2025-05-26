@@ -1,0 +1,5 @@
+package:
+  name: deno-shared
+  dependencies:
+    - nullable
+    - web-url

@@ -5,7 +5,7 @@ import Prelude
 import Data.Array as Array
 import Data.Maybe (Maybe(..))
 import Data.String as String
-import Deno (consoleSize) as Deno
+import Deno.IO (consoleSize) as Deno
 import Deno.Runtime (chdir, cwd, execPath, loadavg, memoryUsage, systemMemoryInfo, addSignalListener, removeSignalListener, refTimer, unrefTimer, LoadAvgResult(..), args, build, exitCode, setExitCode, mainModule, noColor, pid, ppid, version, env) as Deno
 import Deno.Runtime.Env (get, set, delete, has, toObject) as Env
 import Deno.Runtime.Signal (Signal(..))
@@ -170,18 +170,18 @@ spec = do
         envObj <- pure Deno.env
         let testKey = "PURESCRIPT_DENO_TEST_VAR"
         let testValue = "test_value_12345"
-        
+
         -- Set the test variable
         liftEffect $ Env.set envObj testKey testValue
-        
+
         -- Check it exists
         hasVar <- liftEffect $ Env.has envObj testKey
         hasVar `shouldEqual` true
-        
+
         -- Get the value back
         getValue <- liftEffect $ Env.get envObj testKey
         getValue `shouldEqual` (Just testValue)
-        
+
         -- Clean up
         liftEffect $ Env.delete envObj testKey
 
@@ -189,21 +189,21 @@ spec = do
         envObj <- pure Deno.env
         let testKey = "PURESCRIPT_DENO_DELETE_TEST"
         let testValue = "delete_me"
-        
+
         -- Set the test variable
         liftEffect $ Env.set envObj testKey testValue
-        
+
         -- Verify it exists
         hasVar1 <- liftEffect $ Env.has envObj testKey
         hasVar1 `shouldEqual` true
-        
+
         -- Delete it
         liftEffect $ Env.delete envObj testKey
-        
+
         -- Verify it's gone
         hasVar2 <- liftEffect $ Env.has envObj testKey
         hasVar2 `shouldEqual` false
-        
+
         -- Getting it should return Nothing
         getValue <- liftEffect $ Env.get envObj testKey
         getValue `shouldEqual` Nothing
@@ -211,7 +211,7 @@ spec = do
       it "should check environment variable existence" do
         envObj <- pure Deno.env
         let nonExistentKey = "PURESCRIPT_DENO_NONEXISTENT_VAR_98765"
-        
+
         -- This variable should not exist
         hasVar <- liftEffect $ Env.has envObj nonExistentKey
         hasVar `shouldEqual` false
@@ -229,13 +229,13 @@ spec = do
         envObj <- pure Deno.env
         let testKey = "PURESCRIPT_DENO_COMPLEX_TEST"
         let complexValue = "value with spaces and special chars: !@#$%^&*()"
-        
+
         -- Set complex value
         liftEffect $ Env.set envObj testKey complexValue
-        
+
         -- Get it back
         getValue <- liftEffect $ Env.get envObj testKey
         getValue `shouldEqual` (Just complexValue)
-        
+
         -- Clean up
         liftEffect $ Env.delete envObj testKey

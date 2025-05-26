@@ -1,4 +1,4 @@
-module Deno
+module Deno.IO
   ( consoleSize
   ) where
 

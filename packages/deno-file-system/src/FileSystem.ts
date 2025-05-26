@@ -3,7 +3,7 @@ import type {
   EffectFn3,
   EffectFn4,
   EffectFn5,
-} from "../purescript.d.ts";
+} from "../../../purescript.d.ts";
 
 export const _chmod: EffectFn4<
   string | URL,
