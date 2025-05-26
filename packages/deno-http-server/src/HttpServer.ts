@@ -1,3 +1,5 @@
+/// <reference lib="deno.ns" />
+
 import type { EffectFn1, EffectFn2, EffectFn3 } from "../../../purescript.d.ts";
 
 // Serve function
