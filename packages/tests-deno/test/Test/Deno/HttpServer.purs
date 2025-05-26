@@ -62,3 +62,33 @@ spec = describe "Deno.HttpServer" do
       -- Just verify the function exists and has the expected type
       let _ = HttpServer.serveTls
       true `shouldEqual` true
+      
+  describe "finished" do
+    it "exports a finished function" do
+      -- Just verify the function exists and has the expected type
+      let _ = HttpServer.finished
+      true `shouldEqual` true
+
+  describe "addr" do
+    it "exports an addr function" do
+      -- Just verify the function exists and has the expected type
+      let _ = HttpServer.addr
+      true `shouldEqual` true
+
+  describe "ref" do
+    it "exports a ref function" do
+      -- Just verify the function exists and has the expected type
+      let _ = HttpServer.ref
+      true `shouldEqual` true
+
+  describe "unref" do
+    it "exports an unref function" do
+      -- Just verify the function exists and has the expected type
+      let _ = HttpServer.unref
+      true `shouldEqual` true
+
+  describe "shutdown" do
+    it "exports a shutdown function" do
+      -- Just verify the function exists and has the expected type
+      let _ = HttpServer.shutdown
+      true `shouldEqual` true

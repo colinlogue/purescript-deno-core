@@ -20,3 +20,23 @@ export const _serveVsock: EffectFn2<Deno.ServeVsockOptions, Deno.ServeHandler<De
 export const _serveTcp: EffectFn2<Deno.ServeTcpOptions | (Deno.ServeTcpOptions & Deno.TlsCertifiedKeyPem), Deno.ServeHandler<Deno.NetAddr>, Deno.HttpServer<Deno.NetAddr>> = (options, handler) => {
   return Deno.serve(options, handler);
 };
+
+export const _finished = (server: Deno.HttpServer<any>): Promise<void> => {
+  return server.finished;
+};
+
+export const _addr = (server: Deno.HttpServer<any>): any => {
+  return server.addr;
+};
+
+export const _ref = (server: Deno.HttpServer<any>): void => {
+  server.ref();
+};
+
+export const _unref = (server: Deno.HttpServer<any>): void => {
+  server.unref();
+};
+
+export const _shutdown = (server: Deno.HttpServer<any>): Promise<void> => {
+  return server.shutdown();
+};
