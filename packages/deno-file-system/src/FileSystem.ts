@@ -306,3 +306,21 @@ export const _makeTempFile: EffectFn3<
 export const _makeTempFileSync: EffectFn1<Deno.MakeTempOptions, string> = (options) => {
   return Deno.makeTempFileSync(options);
 };
+
+// File time modification functions
+export const _utime: EffectFn5<
+  string | URL,
+  number,
+  number,
+  () => void,
+  EffectFn1<Error, void>,
+  void
+> = (path, atime, mtime, onSuccess, onError) => {
+  Deno.utime(path, atime, mtime)
+    .then(onSuccess)
+    .catch(onError);
+};
+
+export const _utimeSync: EffectFn3<string | URL, number, number, void> = (path, atime, mtime) => {
+  Deno.utimeSync(path, atime, mtime);
+};

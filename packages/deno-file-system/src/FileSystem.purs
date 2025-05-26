@@ -28,6 +28,8 @@ module Deno.FileSystem
   , symlink
   , truncate
   , umask
+  , utime
+  , utimeSync
   , writeFile
   , writeTextFile
   ) where
@@ -47,7 +49,7 @@ import Deno.FileSystem.OpenOptions (OpenOptions)
 import Deno.FileSystem.WriteFileOptions (WriteFileOptions)
 import Effect (Effect)
 import Effect.Aff (Aff, Error, makeAff)
-import Effect.Uncurried (EffectFn1, EffectFn2, EffectFn3, EffectFn4, EffectFn5, mkEffectFn1, runEffectFn1, runEffectFn2, runEffectFn3, runEffectFn4, runEffectFn5)
+import Effect.Uncurried (EffectFn1, EffectFn3, EffectFn4, EffectFn5, mkEffectFn1, runEffectFn1, runEffectFn3, runEffectFn4, runEffectFn5)
 
 foreign import _chmod :: EffectFn4 StringOrUrl Int (Effect Unit) (EffectFn1 Error Unit) Unit
 
@@ -318,3 +320,20 @@ foreign import _makeTempFileSync :: EffectFn1 MakeTempOptions String
 
 makeTempFileSync :: MakeTempOptions -> Effect String
 makeTempFileSync = runEffectFn1 _makeTempFileSync
+
+-- File time modification functions
+
+foreign import _utime :: EffectFn5 StringOrUrl Number Number (Effect Unit) (EffectFn1 Error Unit) Unit
+
+utime :: forall a. IsStringOrUrl a => Number -> Number -> a -> Aff Unit
+utime atime mtime path = makeAff \cb ->
+  let
+    onSuccess = cb (Right unit)
+    onFailure = cb <<< Left
+  in
+    runEffectFn5 _utime (toStringOrUrl path) atime mtime onSuccess (mkEffectFn1 onFailure) *> mempty
+
+foreign import _utimeSync :: EffectFn3 StringOrUrl Number Number Unit
+
+utimeSync :: forall a. IsStringOrUrl a => Number -> Number -> a -> Effect Unit
+utimeSync atime mtime path = runEffectFn3 _utimeSync (toStringOrUrl path) atime mtime
