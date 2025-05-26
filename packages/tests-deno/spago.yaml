@@ -1,0 +1,19 @@
+package:
+  name: tests-deno
+  dependencies: []
+  build:
+    pedanticPackages: true
+  test:
+    dependencies:
+      - arraybuffer
+      - deno-errors
+      - deno-file-system
+      - deno-http-server
+      - deno-io
+      - deno-runtime
+      - deno-shared
+      - deno-subprocess
+      - spec
+      - spec-deno
+    main:
+      Test.Main

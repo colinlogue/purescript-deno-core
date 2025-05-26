@@ -11,6 +11,10 @@ module Deno.FileSystem
   , dirEntryName
   , link
   , lstat
+  , makeTempDir
+  , makeTempDirSync
+  , makeTempFile
+  , makeTempFileSync
   , mkdir
   , open
   , readDir
@@ -24,6 +28,9 @@ module Deno.FileSystem
   , symlink
   , truncate
   , umask
+  , utime
+  , utimeSync
+  , watchFs
   , writeFile
   , writeTextFile
   ) where
@@ -37,12 +44,14 @@ import Data.Maybe (Maybe)
 import Data.Nullable (Nullable, toNullable)
 import Deno.FileSystem.FileInfo (FileInfo)
 import Deno.FileSystem.FsFile (FsFile)
+import Deno.FileSystem.FsWatcher (FsWatcher)
+import Deno.FileSystem.MakeTempOptions (MakeTempOptions)
 import Deno.FileSystem.MkdirOptions (MkdirOptions)
 import Deno.FileSystem.OpenOptions (OpenOptions)
 import Deno.FileSystem.WriteFileOptions (WriteFileOptions)
 import Effect (Effect)
 import Effect.Aff (Aff, Error, makeAff)
-import Effect.Uncurried (EffectFn1, EffectFn3, EffectFn4, EffectFn5, mkEffectFn1, runEffectFn1, runEffectFn3, runEffectFn4, runEffectFn5)
+import Effect.Uncurried (EffectFn1, EffectFn2, EffectFn3, EffectFn4, EffectFn5, mkEffectFn1, runEffectFn1, runEffectFn2, runEffectFn3, runEffectFn4, runEffectFn5)
 
 foreign import _chmod :: EffectFn4 StringOrUrl Int (Effect Unit) (EffectFn1 Error Unit) Unit
 
@@ -281,3 +290,60 @@ dirEntryIsDirectory = runEffectFn1 _dirEntryIsDirectory
 
 dirEntryIsSymlink :: DirEntry -> Effect Boolean
 dirEntryIsSymlink = runEffectFn1 _dirEntryIsSymlink
+
+-- Temporary directory and file creation functions
+
+foreign import _makeTempDir :: EffectFn3 MakeTempOptions (EffectFn1 String Unit) (EffectFn1 Error Unit) Unit
+
+makeTempDir :: MakeTempOptions -> Aff String
+makeTempDir opts = makeAff \cb ->
+  let
+    onSuccess = cb <<< Right
+    onFailure = cb <<< Left
+  in
+    runEffectFn3 _makeTempDir opts (mkEffectFn1 onSuccess) (mkEffectFn1 onFailure) *> mempty
+
+foreign import _makeTempDirSync :: EffectFn1 MakeTempOptions String
+
+makeTempDirSync :: MakeTempOptions -> Effect String
+makeTempDirSync = runEffectFn1 _makeTempDirSync
+
+foreign import _makeTempFile :: EffectFn3 MakeTempOptions (EffectFn1 String Unit) (EffectFn1 Error Unit) Unit
+
+makeTempFile :: MakeTempOptions -> Aff String
+makeTempFile opts = makeAff \cb ->
+  let
+    onSuccess = cb <<< Right
+    onFailure = cb <<< Left
+  in
+    runEffectFn3 _makeTempFile opts (mkEffectFn1 onSuccess) (mkEffectFn1 onFailure) *> mempty
+
+foreign import _makeTempFileSync :: EffectFn1 MakeTempOptions String
+
+makeTempFileSync :: MakeTempOptions -> Effect String
+makeTempFileSync = runEffectFn1 _makeTempFileSync
+
+-- File time modification functions
+
+foreign import _utime :: EffectFn5 StringOrUrl Number Number (Effect Unit) (EffectFn1 Error Unit) Unit
+
+utime :: forall a. IsStringOrUrl a => Number -> Number -> a -> Aff Unit
+utime atime mtime path = makeAff \cb ->
+  let
+    onSuccess = cb (Right unit)
+    onFailure = cb <<< Left
+  in
+    runEffectFn5 _utime (toStringOrUrl path) atime mtime onSuccess (mkEffectFn1 onFailure) *> mempty
+
+foreign import _utimeSync :: EffectFn3 StringOrUrl Number Number Unit
+
+utimeSync :: forall a. IsStringOrUrl a => Number -> Number -> a -> Effect Unit
+utimeSync atime mtime path = runEffectFn3 _utimeSync (toStringOrUrl path) atime mtime
+
+-- File system watching functions and types
+
+foreign import _watchFs :: EffectFn2 (Array String) { recursive :: Boolean } FsWatcher
+
+-- | Watch file system changes at specified paths
+watchFs :: Array String -> Boolean -> Effect FsWatcher
+watchFs paths recursive = runEffectFn2 _watchFs paths { recursive }
