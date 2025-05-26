@@ -14,3 +14,12 @@ package:
     - web-streams
   build:
     pedanticPackages: true
+  test:
+    main: Test.Main
+    dependencies:
+      - arrays
+      - arraybuffer
+      - integers
+      - refs
+      - spec-deno
+      - strings
