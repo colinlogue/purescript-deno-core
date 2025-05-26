@@ -30,6 +30,7 @@ module Deno.FileSystem
   , umask
   , utime
   , utimeSync
+  , watchFs
   , writeFile
   , writeTextFile
   ) where
@@ -43,13 +44,14 @@ import Data.Maybe (Maybe)
 import Data.Nullable (Nullable, toNullable)
 import Deno.FileSystem.FileInfo (FileInfo)
 import Deno.FileSystem.FsFile (FsFile)
+import Deno.FileSystem.FsWatcher (FsWatcher)
 import Deno.FileSystem.MakeTempOptions (MakeTempOptions)
 import Deno.FileSystem.MkdirOptions (MkdirOptions)
 import Deno.FileSystem.OpenOptions (OpenOptions)
 import Deno.FileSystem.WriteFileOptions (WriteFileOptions)
 import Effect (Effect)
 import Effect.Aff (Aff, Error, makeAff)
-import Effect.Uncurried (EffectFn1, EffectFn3, EffectFn4, EffectFn5, mkEffectFn1, runEffectFn1, runEffectFn3, runEffectFn4, runEffectFn5)
+import Effect.Uncurried (EffectFn1, EffectFn2, EffectFn3, EffectFn4, EffectFn5, mkEffectFn1, runEffectFn1, runEffectFn2, runEffectFn3, runEffectFn4, runEffectFn5)
 
 foreign import _chmod :: EffectFn4 StringOrUrl Int (Effect Unit) (EffectFn1 Error Unit) Unit
 
@@ -337,3 +339,11 @@ foreign import _utimeSync :: EffectFn3 StringOrUrl Number Number Unit
 
 utimeSync :: forall a. IsStringOrUrl a => Number -> Number -> a -> Effect Unit
 utimeSync atime mtime path = runEffectFn3 _utimeSync (toStringOrUrl path) atime mtime
+
+-- File system watching functions and types
+
+foreign import _watchFs :: EffectFn2 (Array String) { recursive :: Boolean } FsWatcher
+
+-- | Watch file system changes at specified paths
+watchFs :: Array String -> Boolean -> Effect FsWatcher
+watchFs paths recursive = runEffectFn2 _watchFs paths { recursive }

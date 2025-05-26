@@ -1,5 +1,6 @@
 import type {
   EffectFn1,
+  EffectFn2,
   EffectFn3,
   EffectFn4,
   EffectFn5,
@@ -323,4 +324,13 @@ export const _utime: EffectFn5<
 
 export const _utimeSync: EffectFn3<string | URL, number, number, void> = (path, atime, mtime) => {
   Deno.utimeSync(path, atime, mtime);
+};
+
+// File system watching functions
+export const _watchFs: EffectFn2<
+  string | string[],
+  { recursive: boolean },
+  Deno.FsWatcher
+> = (paths, options) => {
+  return Deno.watchFs(paths, options);
 };
