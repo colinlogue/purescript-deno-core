@@ -4,6 +4,10 @@ module Deno.HttpServer
   , ConnInfo
   , Server
   , Handler
+  , Request
+  , Response
+  , Error
+  , AbortSignal
   , serve
   , serveTls
   , createServer
