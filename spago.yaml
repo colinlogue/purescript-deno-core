@@ -1,17 +1,3 @@
-package:
-  name: deno
-  dependencies:
-    - deno-errors
-    - deno-file-system
-    - deno-io
-    - deno-runtime
-    - deno-subprocess
-  test:
-    main: Test.Main
-    dependencies:
-      - arraybuffer
-      - spec-deno
-
 workspace:
   packageSet:
     registry: 64.10.0
