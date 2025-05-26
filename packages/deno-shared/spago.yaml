@@ -12,3 +12,10 @@ package:
     - web-url
   build:
     pedanticPackages: true
+  test:
+    main: Test.Main
+    dependencies:
+      - arraybuffer-types
+      - deno-file-system
+      - spec-deno
+      - web-streams

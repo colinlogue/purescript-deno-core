@@ -17,3 +17,8 @@ package:
     - web-streams
   build:
     pedanticPackages: true
+  test:
+    main: Test.Main
+    dependencies:
+      - spec-deno
+      - strings
