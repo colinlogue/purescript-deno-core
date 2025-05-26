@@ -7,7 +7,7 @@ PureScript bindings for the [Deno HTTP Server API](https://docs.deno.com/api/den
 - Full bindings for Deno's HTTP server
 - Start HTTP and HTTPS servers
 - Type-safe interfaces for server configuration
-- Support for request/response handling
+- Support for request/response handling using Web Fetch API types
 - Server lifecycle management (start, listen, close)
 
 ## Usage Example
@@ -20,6 +20,7 @@ import Deno.HttpServer.Response as Response
 import Effect.Aff (launchAff_)
 import Effect.Class (liftEffect)
 import Effect.Console (log)
+import Web.Fetch.Response (Response)
 
 main = launchAff_ do
   let serverOptions = 

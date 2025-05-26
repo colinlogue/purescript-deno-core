@@ -7,3 +7,8 @@ package:
     - control
     - functions
     - deno-shared
+    - web-fetch
+  test:
+    main: Test.Deno.HttpServer
+    dependencies:
+      - spec-deno

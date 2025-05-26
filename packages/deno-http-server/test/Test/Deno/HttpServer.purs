@@ -4,7 +4,7 @@ import Prelude
 
 import Control.Promise (Promise)
 import Data.Maybe (Maybe(..))
-import Deno.HttpServer (AbortSignal, ConnInfo, Request, Response, ServeInit, Server, createServer, closeServer)
+import Deno.HttpServer (AbortSignal, ConnInfo, Request, ServeInit, Server, createServer, closeServer)
 import Deno.HttpServer as HttpServer
 import Effect (Effect)
 import Effect.Aff (Aff, launchAff_)
@@ -15,6 +15,7 @@ import Effect.Exception (error)
 import Effect.Ref as Ref
 import Test.Spec (Spec, describe, it, pending)
 import Test.Spec.Assertions (shouldEqual)
+import Web.Fetch.Response (Response)
 
 -- Test requests and responses are not fully implemented in this test suite
 -- since we'd need a web fetch API implementation and test infrastructure

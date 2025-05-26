@@ -5,7 +5,6 @@ module Deno.HttpServer
   , Server
   , Handler
   , Request
-  , Response
   , Error
   , AbortSignal
   , serve
@@ -26,6 +25,7 @@ import Deno.HttpServer.Foreign (Foreign, unsafeToForeign)
 import Effect (Effect)
 import Effect.Aff (Aff)
 import Effect.Uncurried (EffectFn1, EffectFn2, runEffectFn1, runEffectFn2)
+import Web.Fetch.Response (Response)
 
 -- | Type for HTTP request handler function
 type Handler = Request -> Aff Response
@@ -64,9 +64,6 @@ foreign import data Server :: Type
 
 -- | HTTP request type (from Web API)
 foreign import data Request :: Type
-
--- | HTTP response type (from Web API)
-foreign import data Response :: Type
 
 -- | Signal for aborting operations (from Web API)
 foreign import data AbortSignal :: Type
