@@ -1,0 +1,9 @@
+package:
+  name: deno-http-server
+  dependencies:
+    - prelude
+    - effect
+    - aff
+    - control
+    - functions
+    - deno-shared

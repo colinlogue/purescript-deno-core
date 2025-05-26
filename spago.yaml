@@ -3,6 +3,7 @@ package:
   dependencies:
     - deno-errors
     - deno-file-system
+    - deno-http-server
     - deno-io
     - deno-runtime
     - deno-subprocess
