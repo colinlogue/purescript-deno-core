@@ -2,3 +2,5 @@ package:
   name: deno-io
   dependencies:
     - effect
+  build:
+    pedanticPackages: true

@@ -199,9 +199,16 @@
         "core": {
           "dependencies": [
             "aff",
+            "arraybuffer-types",
             "deno-shared",
-            "js-fetch",
-            "nullable"
+            "effect",
+            "either",
+            "exceptions",
+            "functions",
+            "maybe",
+            "nullable",
+            "prelude",
+            "web-streams"
           ],
           "build_plan": [
             "aff",
@@ -223,23 +230,18 @@
             "exceptions",
             "exists",
             "foldable-traversable",
-            "foreign",
-            "foreign-object",
             "fork",
             "free",
             "functions",
             "functors",
             "gen",
-            "http-methods",
             "identity",
             "integers",
             "invariant",
-            "js-fetch",
             "js-promise",
             "lazy",
             "lists",
             "maybe",
-            "media-types",
             "mmorph",
             "newtype",
             "nonempty",
@@ -253,7 +255,6 @@
             "pipes",
             "prelude",
             "profunctor",
-            "record",
             "refs",
             "safe-coerce",
             "spec",
@@ -263,12 +264,8 @@
             "transformers",
             "tuples",
             "type-equality",
-            "typelevel-prelude",
             "unfoldable",
             "unsafe-coerce",
-            "web-dom",
-            "web-events",
-            "web-file",
             "web-streams",
             "web-url"
           ]
@@ -373,7 +370,14 @@
         "path": "packages/deno-shared",
         "core": {
           "dependencies": [
+            "aff",
+            "effect",
+            "either",
+            "exceptions",
+            "maybe",
             "nullable",
+            "prelude",
+            "unsafe-coerce",
             "web-url"
           ],
           "build_plan": [
@@ -442,6 +446,7 @@
         "core": {
           "dependencies": [
             "aff",
+            "arraybuffer-types",
             "deno-runtime",
             "deno-shared",
             "effect",
@@ -449,6 +454,8 @@
             "exceptions",
             "functions",
             "js-fetch",
+            "maybe",
+            "nullable",
             "prelude",
             "unsafe-coerce",
             "web-streams"

@@ -1,5 +1,14 @@
 package:
   name: deno-shared
   dependencies:
+    - aff
+    - effect
+    - either
+    - exceptions
+    - maybe
     - nullable
+    - prelude
+    - unsafe-coerce
     - web-url
+  build:
+    pedanticPackages: true

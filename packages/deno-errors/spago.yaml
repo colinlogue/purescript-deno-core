@@ -2,3 +2,5 @@ package:
   name: deno-errors
   dependencies:
     - exceptions
+  build:
+    pedanticPackages: true

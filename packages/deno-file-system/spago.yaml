@@ -2,6 +2,15 @@ package:
   name: deno-file-system
   dependencies:
     - aff
+    - arraybuffer-types
     - deno-shared
-    - js-fetch
+    - effect
+    - either
+    - exceptions
+    - functions
+    - maybe
     - nullable
+    - prelude
+    - web-streams
+  build:
+    pedanticPackages: true

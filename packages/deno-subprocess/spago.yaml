@@ -2,6 +2,7 @@ package:
   name: deno-subprocess
   dependencies:
     - aff
+    - arraybuffer-types
     - deno-runtime
     - deno-shared
     - effect
@@ -9,6 +10,10 @@ package:
     - exceptions
     - functions
     - js-fetch
+    - maybe
+    - nullable
     - prelude
     - unsafe-coerce
     - web-streams
+  build:
+    pedanticPackages: true
