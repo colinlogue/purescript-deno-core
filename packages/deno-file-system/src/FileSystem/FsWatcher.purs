@@ -6,7 +6,7 @@ import Data.Maybe (Maybe)
 import Data.Nullable (Nullable)
 import Data.Nullable as Nullable
 import Effect (Effect)
-import Effect.Uncurried (EffectFn1, runEffectFn1)
+import Effect.Uncurried (EffectFn1, EffectFn2, runEffectFn1, runEffectFn2)
 
 
 foreign import data FsWatcher :: Type
@@ -34,3 +34,25 @@ fsEventFlag event = Nullable.toMaybe <$> runEffectFn1 _fsEventFlag event
 
 fsEventPaths :: FsEvent -> Effect (Array String)
 fsEventPaths = runEffectFn1 _fsEventPaths
+
+-- Watch for FsEvents
+foreign import _watch :: EffectFn2 (FsEvent -> Effect Unit) FsWatcher (Effect Unit)
+
+-- | Watch for filesystem events emitted by a FsWatcher.
+-- |
+-- | This function takes a callback that will be invoked for each event emitted
+-- | and returns an Effect that, when executed, will stop watching for events.
+-- |
+-- | ```purescript
+-- | do
+-- |   watcher <- watchFs ["/path/to/watch"] false
+-- |   stopWatching <- watch (\event -> do
+-- |     paths <- fsEventPaths event
+-- |     log $ "File change detected: " <> show paths
+-- |   ) watcher
+-- |   
+-- |   -- Later, to stop watching:
+-- |   stopWatching
+-- | ```
+watch :: (FsEvent -> Effect Unit) -> FsWatcher -> Effect (Effect Unit)
+watch handler watcher = runEffectFn2 _watch handler watcher
