@@ -1,44 +1,22 @@
-/// <reference lib="deno.ns" />
 
 import type { EffectFn1, EffectFn2, EffectFn3 } from "../../../purescript.d.ts";
 
-// Serve function
-export const _serve: EffectFn2<unknown, (req: Request) => Promise<Response>, Promise<void>> = 
-  async (options, handler) => {
-    return Deno.serve(options, handler).finished;
-  };
+export const _serveNet: EffectFn1<Deno.ServeHandler<Deno.NetAddr>, Deno.HttpServer<Deno.NetAddr>> = (handler) => {
+  return Deno.serve(handler);
+};
 
-// ServeTls function
-export const _serveTls: EffectFn2<unknown, (req: Request) => Promise<Response>, Promise<void>> = 
-  async (options, handler) => {
-    return Deno.serveTls(options, handler).finished;
-  };
+export const _serveUnix: EffectFn3<'unix' | null, string, Deno.ServeHandler<Deno.UnixAddr>, Deno.HttpServer<Deno.UnixAddr>> = (transport, path, handler) => {
+  const options: Deno.ServeUnixOptions = { path };
+  if (transport) {
+    options.transport = transport;
+  }
+  return Deno.serve(options, handler);
+};
 
-// Server creation without starting
-export const _createServer: EffectFn2<unknown, (req: Request) => Promise<Response>, unknown> = 
-  (options, handler) => {
-    return Deno.serve(options, handler);
-  };
+export const _serveVsock: EffectFn2<Deno.ServeVsockOptions, Deno.ServeHandler<Deno.VsockAddr>, Deno.HttpServer<Deno.VsockAddr>> = (options, handler) => {
+  return Deno.serve(options, handler);
+};
 
-// Server creation with TLS without starting
-export const _createServerTls: EffectFn2<unknown, (req: Request) => Promise<Response>, unknown> = 
-  (options, handler) => {
-    return Deno.serveTls(options, handler);
-  };
-
-// Server methods
-export const _listenAndServe: EffectFn1<unknown, Promise<void>> = 
-  async (server) => {
-    return (server as Deno.Server).listenAndServe();
-  };
-
-export const _serverFinished: EffectFn1<unknown, Promise<void>> = 
-  async (server) => {
-    return (server as Deno.Server).finished;
-  };
-
-export const _closeServer: EffectFn1<unknown, Promise<void>> = 
-  async (server) => {
-    await (server as Deno.Server).close();
-    return Promise.resolve();
-  };
+export const _serveTcp: EffectFn2<Deno.ServeTcpOptions | (Deno.ServeTcpOptions & Deno.TlsCertifiedKeyPem), Deno.ServeHandler<Deno.NetAddr>, Deno.HttpServer<Deno.NetAddr>> = (options, handler) => {
+  return Deno.serve(options, handler);
+};

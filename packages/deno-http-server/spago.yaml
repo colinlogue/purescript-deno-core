@@ -1,14 +1,11 @@
 package:
   name: deno-http-server
   dependencies:
-    - prelude
-    - effect
     - aff
+    - aff-promise
     - control
-    - functions
     - deno-shared
+    - effect
+    - functions
+    - prelude
     - web-fetch
-  test:
-    main: Test.Deno.HttpServer
-    dependencies:
-      - spec-deno
