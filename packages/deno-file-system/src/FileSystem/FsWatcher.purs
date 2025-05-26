@@ -6,7 +6,7 @@ import Data.Maybe (Maybe)
 import Data.Nullable (Nullable)
 import Data.Nullable as Nullable
 import Effect (Effect)
-import Effect.Uncurried (EffectFn1, EffectFn2, runEffectFn1, runEffectFn2)
+import Effect.Uncurried (EffectFn1, EffectFn2, mkEffectFn1, runEffectFn1, runEffectFn2)
 
 
 foreign import data FsWatcher :: Type
@@ -36,7 +36,7 @@ fsEventPaths :: FsEvent -> Effect (Array String)
 fsEventPaths = runEffectFn1 _fsEventPaths
 
 -- Watch for FsEvents
-foreign import _watch :: EffectFn2 (FsEvent -> Effect Unit) FsWatcher (Effect Unit)
+foreign import _watch :: EffectFn2 (EffectFn1 FsEvent Unit) FsWatcher (Effect Unit)
 
 -- | Watch for filesystem events emitted by a FsWatcher.
 -- |
@@ -50,9 +50,9 @@ foreign import _watch :: EffectFn2 (FsEvent -> Effect Unit) FsWatcher (Effect Un
 -- |     paths <- fsEventPaths event
 -- |     log $ "File change detected: " <> show paths
 -- |   ) watcher
--- |   
+-- |
 -- |   -- Later, to stop watching:
 -- |   stopWatching
 -- | ```
 watch :: (FsEvent -> Effect Unit) -> FsWatcher -> Effect (Effect Unit)
-watch handler watcher = runEffectFn2 _watch handler watcher
+watch handler watcher = runEffectFn2 _watch (mkEffectFn1 handler) watcher
