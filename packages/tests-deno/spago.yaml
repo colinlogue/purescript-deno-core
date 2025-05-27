@@ -8,6 +8,7 @@ package:
       - arraybuffer
       - deno-errors
       - deno-file-system
+      - deno-http-server
       - deno-io
       - deno-runtime
       - deno-shared

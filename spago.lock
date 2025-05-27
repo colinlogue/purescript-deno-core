@@ -106,6 +106,95 @@
           "build_plan": []
         }
       },
+      "deno-http-server": {
+        "path": "packages/deno-http-server",
+        "core": {
+          "dependencies": [
+            "aff",
+            "aff-promise",
+            "control",
+            "deno-shared",
+            "effect",
+            "functions",
+            "prelude",
+            "web-fetch"
+          ],
+          "build_plan": [
+            "aff",
+            "aff-promise",
+            "ansi",
+            "arraybuffer-types",
+            "arrays",
+            "avar",
+            "bifunctors",
+            "catenable-lists",
+            "const",
+            "contravariant",
+            "control",
+            "datetime",
+            "deno-shared",
+            "distributive",
+            "effect",
+            "either",
+            "enums",
+            "exceptions",
+            "exists",
+            "foldable-traversable",
+            "foreign",
+            "foreign-object",
+            "fork",
+            "free",
+            "functions",
+            "functors",
+            "gen",
+            "http-methods",
+            "identity",
+            "integers",
+            "invariant",
+            "js-promise",
+            "lazy",
+            "lists",
+            "maybe",
+            "media-types",
+            "mmorph",
+            "newtype",
+            "nonempty",
+            "now",
+            "nullable",
+            "numbers",
+            "ordered-collections",
+            "orders",
+            "parallel",
+            "partial",
+            "pipes",
+            "prelude",
+            "profunctor",
+            "record",
+            "refs",
+            "safe-coerce",
+            "spec",
+            "st",
+            "strings",
+            "tailrec",
+            "transformers",
+            "tuples",
+            "type-equality",
+            "typelevel-prelude",
+            "unfoldable",
+            "unsafe-coerce",
+            "web-dom",
+            "web-events",
+            "web-fetch",
+            "web-file",
+            "web-streams",
+            "web-url"
+          ]
+        },
+        "test": {
+          "dependencies": [],
+          "build_plan": []
+        }
+      },
       "deno-io": {
         "path": "packages/deno-io",
         "core": {
@@ -378,6 +467,7 @@
             "arraybuffer",
             "deno-errors",
             "deno-file-system",
+            "deno-http-server",
             "deno-io",
             "deno-runtime",
             "deno-shared",
@@ -387,6 +477,7 @@
           ],
           "build_plan": [
             "aff",
+            "aff-promise",
             "ansi",
             "argonaut-codecs",
             "argonaut-core",
@@ -403,6 +494,7 @@
             "datetime",
             "deno-errors",
             "deno-file-system",
+            "deno-http-server",
             "deno-io",
             "deno-runtime",
             "deno-shared",
@@ -473,6 +565,7 @@
             "unsafe-coerce",
             "web-dom",
             "web-events",
+            "web-fetch",
             "web-file",
             "web-streams",
             "web-url"
@@ -1051,6 +1144,15 @@
         "tailrec",
         "transformers",
         "unsafe-coerce"
+      ]
+    },
+    "aff-promise": {
+      "type": "registry",
+      "version": "4.0.0",
+      "integrity": "sha256-Kq5EupbUpXeUXx4JqGQE7/RTTz/H6idzWhsocwlEFhM=",
+      "dependencies": [
+        "aff",
+        "foreign"
       ]
     },
     "ansi": {
@@ -2141,6 +2243,22 @@
         "enums",
         "foreign",
         "nullable"
+      ]
+    },
+    "web-fetch": {
+      "type": "registry",
+      "version": "4.0.1",
+      "integrity": "sha256-IGyNkq+GilcHhfQslTxIp5bHon6f1UAiN3Cu414yAko=",
+      "dependencies": [
+        "effect",
+        "foreign-object",
+        "http-methods",
+        "js-promise",
+        "prelude",
+        "record",
+        "typelevel-prelude",
+        "web-file",
+        "web-streams"
       ]
     },
     "web-file": {
