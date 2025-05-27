@@ -1,0 +1,37 @@
+{
+  "name": "PureScript Deno Development",
+  "dockerFile": "Dockerfile",
+  "forwardPorts": [8000],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "denoland.vscode-deno",
+        "github.copilot",
+        "purescript.purescript-vscode",
+        "esbenp.prettier-vscode"
+      ],
+      "settings": {
+        "deno.enable": true,
+        "deno.lint": true,
+        "deno.unstable": false,
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "purescript.buildCommand": "spago build --purs-args --json-errors",
+        "[purescript]": {
+          "editor.defaultFormatter": "purescript.purescript-vscode"
+        },
+        "[typescript]": {
+          "editor.defaultFormatter": "denoland.vscode-deno"
+        },
+        "[javascript]": {
+          "editor.defaultFormatter": "denoland.vscode-deno"
+        }
+      }
+    }
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+  "remoteUser": "vscode",
+  "postCreateCommand": "npm install"
+}
