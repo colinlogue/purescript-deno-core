@@ -1,6 +1,6 @@
 {
   "name": "purescript-deno-bindings",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "PureScript bindings for Deno",
   "devDependencies": {
     "@types/deno": "^2.3.0",
