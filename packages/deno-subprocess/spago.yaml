@@ -9,11 +9,11 @@ package:
     - either
     - exceptions
     - functions
-    - js-fetch
     - maybe
     - nullable
     - prelude
     - unsafe-coerce
+    - web-fetch
     - web-streams
   build:
     pedanticPackages: true

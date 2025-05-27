@@ -3,9 +3,11 @@ package:
   dependencies:
     - aff
     - aff-promise
-    - control
-    - deno-shared
     - effect
     - functions
+    - maybe
+    - nullable
     - prelude
     - web-fetch
+  build:
+    pedanticPackages: true

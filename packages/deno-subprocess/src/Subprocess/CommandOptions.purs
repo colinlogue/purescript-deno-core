@@ -19,10 +19,10 @@ import Prelude
 
 import Data.Function.Uncurried (Fn2, runFn2)
 import Data.IsStringOrUrl (class IsStringOrUrl, StringOrUrl, toStringOrUrl)
-import JS.Fetch.AbortController (AbortSignal)
 import Prim.RowList (class RowToList, RowList)
 import Prim.RowList as RowList
 import Unsafe.Coerce (unsafeCoerce)
+import Web.Fetch.AbortController (AbortSignal)
 
 
 foreign import data CommandOptions :: Type

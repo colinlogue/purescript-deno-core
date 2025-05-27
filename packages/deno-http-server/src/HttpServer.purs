@@ -30,8 +30,8 @@ import Effect (Effect)
 import Effect.Aff (Aff)
 import Effect.Class (liftEffect)
 import Effect.Uncurried (EffectFn1, EffectFn2, EffectFn3, mkEffectFn2, runEffectFn1, runEffectFn2, runEffectFn3)
-import JS.Fetch.Request (Request)
-import JS.Fetch.Response (Response)
+import Web.Fetch.Request (Request)
+import Web.Fetch.Response (Response)
 
 
 foreign import data HttpServer :: Type -> Type
