@@ -1,6 +1,14 @@
 package:
   name: deno-io
   dependencies:
+    - aff
+    - arraybuffer-types
+    - deno-shared
     - effect
+    - exceptions
+    - maybe
+    - nullable
+    - prelude
+    - web-streams
   build:
     pedanticPackages: true
