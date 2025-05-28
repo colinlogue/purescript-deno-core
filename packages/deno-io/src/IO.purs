@@ -2,9 +2,8 @@ module Deno.IO
   ( consoleSize
   ) where
 
+import Deno.IO.OutputStream (OutputStream)
 import Effect (Effect)
-import IO.OutputChannel (OutputStream)
-
 
 
 foreign import consoleSize :: Effect { columns :: Int, rows :: Int }

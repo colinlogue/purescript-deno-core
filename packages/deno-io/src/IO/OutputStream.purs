@@ -1,4 +1,4 @@
-module IO.OutputChannel where
+module Deno.IO.OutputStream where
 
 import Prelude
 
