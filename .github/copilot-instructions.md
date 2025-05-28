@@ -50,7 +50,6 @@ Make sure `npm install` and `npm run build` have been run before running the tes
   - Modules in `PascalCase` with dot notation for hierarchy
 - Document all public functions and types with proper documentation comments
 - Organize imports alphabetically
-- Prefer total functions over partial ones when possible
 - Use `Effect` for side-effectful operations
 
 ### TypeScript (FFI)
@@ -78,18 +77,28 @@ When contributing to this project:
 PureScript function with FFI:
 
 ```purescript
--- PureScript file (Module.purs)
-foreign import _readTextFile :: EffectFn2 String String Unit
+-- PureScript file (FileSystem.purs)
+foreign import _readTextFile :: EffectFn3 StringOrUrl (EffectFn1 String Unit) (EffectFn1 Error Unit) Unit
 
-readTextFile :: String -> Effect String
-readTextFile path = runEffectFn1 _readTextFile path
+readTextFile :: forall a. IsStringOrUrl a => a -> Aff String
+readTextFile path = makeAff \cb ->
+  let
+    onSuccess = cb <<< Right
+    onFailure = cb <<< Left
+  in
+    runEffectFn3 _readTextFile (toStringOrUrl path) (mkEffectFn1 onSuccess) (mkEffectFn1 onFailure) *> mempty
 ```
 
 ```typescript
-// TypeScript file (Module.ts)
-import type { EffectFn2 } from "../../../purescript.d.ts";
-
-export const _readTextFile: EffectFn2<string, string, void> = (path, content) => {
-  Deno.writeTextFileSync(path, content);
+// TypeScript file (FileSystem.ts)
+export const _readTextFile: EffectFn3<
+  string | URL,
+  EffectFn1<string, void>,
+  EffectFn1<Error, void>,
+  void
+> = (path, onSuccess, onError) => {
+  Deno.readTextFile(path)
+    .then(onSuccess)
+    .catch(onError);
 };
 ```
