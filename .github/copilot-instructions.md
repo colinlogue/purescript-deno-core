@@ -81,13 +81,7 @@ PureScript function with FFI:
 foreign import _readTextFile :: EffectFn3 StringOrUrl (EffectFn1 String Unit) (EffectFn1 Error Unit) Unit
 
 readTextFile :: forall a. IsStringOrUrl a => a -> Aff String
-readTextFile path = makeAff \cb ->
-  let
-    onSuccess = cb <<< Right
-    onFailure = cb <<< Left
-  in
-    runEffectFn3 _readTextFile (toStringOrUrl path) (mkEffectFn1 onSuccess) (mkEffectFn1 onFailure) *> mempty
-```
+readTextFile path = runAsyncEffect1 _readTextFile (toStringOrUrl path)
 
 ```typescript
 // TypeScript file (FileSystem.ts)

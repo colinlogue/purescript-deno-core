@@ -6,7 +6,6 @@ package:
     - deno-runtime
     - deno-shared
     - effect
-    - either
     - exceptions
     - functions
     - maybe

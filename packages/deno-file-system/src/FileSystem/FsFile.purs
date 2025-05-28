@@ -35,14 +35,16 @@ module Deno.FileSystem.FsFile
 import Prelude
 
 import Data.ArrayBuffer.Types (Uint8Array)
-import Data.Either (Either(..))
+-- Remove unused import
+-- import Data.Either (Either(..))
 import Data.Maybe (Maybe)
 import Data.Nullable (Nullable, toNullable, toMaybe)
 import Deno.FileSystem.FileInfo (FileInfo)
+import Deno.Util (runAsyncEffect1, runAsyncEffect2, runAsyncEffect3)
 import Effect (Effect)
-import Effect.Aff (Aff, makeAff)
+import Effect.Aff (Aff)
 import Effect.Exception (Error)
-import Effect.Uncurried (EffectFn1, EffectFn2, EffectFn3, EffectFn4, EffectFn5, mkEffectFn1, runEffectFn1, runEffectFn2, runEffectFn3, runEffectFn4, runEffectFn5)
+import Effect.Uncurried (EffectFn1, EffectFn2, EffectFn3, EffectFn4, EffectFn5, runEffectFn1, runEffectFn2, runEffectFn3)
 import Web.Streams.ReadableStream (ReadableStream)
 import Web.Streams.WritableStream (WritableStream)
 
@@ -75,15 +77,10 @@ foreign import _isTerminal :: EffectFn1 FsFile Boolean
 isTerminal :: FsFile -> Effect Boolean
 isTerminal = runEffectFn1 _isTerminal
 
-foreign import _lock :: EffectFn4 FsFile Boolean (Effect Unit) (EffectFn1 Error Unit) Unit
+foreign import _lock :: EffectFn4 FsFile Boolean (EffectFn1 Unit Unit) (EffectFn1 Error Unit) Unit
 
 lock :: Boolean -> FsFile -> Aff Unit
-lock blocking file = makeAff \cb ->
-  let
-    onSuccess = cb (Right unit)
-    onFailure = cb <<< Left
-  in
-    runEffectFn4 _lock file blocking onSuccess (mkEffectFn1 onFailure) *> mempty
+lock blocking file = runAsyncEffect2 _lock file blocking
 
 foreign import _lockSync :: EffectFn2 FsFile Boolean Unit
 
@@ -93,19 +90,14 @@ lockSync blocking file = runEffectFn2 _lockSync file blocking
 foreign import _read :: EffectFn4 Uint8Array FsFile (EffectFn1 (Nullable Int) Unit) (EffectFn1 Error Unit) Unit
 
 read :: Uint8Array -> FsFile -> Aff (Maybe Int)
-read buffer file = makeAff \cb ->
-  let
-    onSuccess = cb <<< Right <<< toMaybe
-    onFailure = cb <<< Left
-  in
-    runEffectFn4 _read buffer file (mkEffectFn1 onSuccess) (mkEffectFn1 onFailure) *> mempty
+read buffer file = toMaybe <$> runAsyncEffect2 _read buffer file
 
 foreign import _readSync :: EffectFn2 Uint8Array FsFile (Nullable Int)
 
 readSync :: Uint8Array -> FsFile -> Effect (Maybe Int)
 readSync buffer file = toMaybe <$> runEffectFn2 _readSync buffer file
 
-foreign import _seek :: EffectFn5 Int SeekMode FsFile (Effect Unit) (EffectFn1 Error Unit) Unit
+foreign import _seek :: EffectFn5 Int SeekMode FsFile (EffectFn1 Unit Unit) (EffectFn1 Error Unit) Unit
 
 foreign import data SeekMode :: Type
 
@@ -116,12 +108,7 @@ foreign import seekCurrent :: SeekMode
 foreign import seekEnd :: SeekMode
 
 seek :: Int -> SeekMode -> FsFile -> Aff Unit
-seek offset mode file = makeAff \cb ->
-  let
-    onSuccess = cb (Right unit)
-    onFailure = cb <<< Left
-  in
-    runEffectFn5 _seek offset mode file onSuccess (mkEffectFn1 onFailure) *> mempty
+seek offset mode file = runAsyncEffect3 _seek offset mode file
 
 foreign import _seekSync :: EffectFn3 Int SeekMode FsFile Int
 
@@ -136,27 +123,17 @@ setRaw mode opts file = runEffectFn3 _setRaw mode (toNullable opts) file
 foreign import _stat :: EffectFn3 FsFile (EffectFn1 FileInfo Unit) (EffectFn1 Error Unit) Unit
 
 stat :: FsFile -> Aff FileInfo
-stat file = makeAff \cb ->
-  let
-    onSuccess = cb <<< Right
-    onFailure = cb <<< Left
-  in
-    runEffectFn3 _stat file (mkEffectFn1 onSuccess) (mkEffectFn1 onFailure) *> mempty
+stat file = runAsyncEffect1 _stat file
 
 foreign import _statSync :: EffectFn1 FsFile FileInfo
 
 statSync :: FsFile -> Effect FileInfo
 statSync = runEffectFn1 _statSync
 
-foreign import _syncData :: EffectFn3 FsFile (Effect Unit) (EffectFn1 Error Unit) Unit
+foreign import _syncData :: EffectFn3 FsFile (EffectFn1 Unit Unit) (EffectFn1 Error Unit) Unit
 
 syncData :: FsFile -> Aff Unit
-syncData file = makeAff \cb ->
-  let
-    onSuccess = cb (Right unit)
-    onFailure = cb <<< Left
-  in
-    runEffectFn3 _syncData file onSuccess (mkEffectFn1 onFailure) *> mempty
+syncData file = runAsyncEffect1 _syncData file
 
 foreign import _syncDataSync :: EffectFn1 FsFile Unit
 
@@ -173,15 +150,10 @@ foreign import _truncateSync :: EffectFn2 (Nullable Int) FsFile Unit
 truncateSync :: Maybe Int -> FsFile -> Effect Unit
 truncateSync size file = runEffectFn2 _truncateSync (toNullable size) file
 
-foreign import _utime :: EffectFn5 Number Number FsFile (Effect Unit) (EffectFn1 Error Unit) Unit
+foreign import _utime :: EffectFn5 Number Number FsFile (EffectFn1 Unit Unit) (EffectFn1 Error Unit) Unit
 
 utime :: Number -> Number -> FsFile -> Aff Unit
-utime atime mtime file = makeAff \cb ->
-  let
-    onSuccess = cb (Right unit)
-    onFailure = cb <<< Left
-  in
-    runEffectFn5 _utime atime mtime file onSuccess (mkEffectFn1 onFailure) *> mempty
+utime atime mtime file = runAsyncEffect3 _utime atime mtime file
 
 foreign import _utimeSync :: EffectFn3 Number Number FsFile Unit
 
@@ -191,47 +163,27 @@ utimeSync atime mtime file = runEffectFn3 _utimeSync atime mtime file
 foreign import _write :: EffectFn4 Uint8Array FsFile (EffectFn1 Int Unit) (EffectFn1 Error Unit) Unit
 
 write :: Uint8Array -> FsFile -> Aff Int
-write buffer file = makeAff \cb ->
-  let
-    onSuccess = cb <<< Right
-    onFailure = cb <<< Left
-  in
-    runEffectFn4 _write buffer file (mkEffectFn1 onSuccess) (mkEffectFn1 onFailure) *> mempty
+write buffer file = runAsyncEffect2 _write buffer file
 
 foreign import _writeSync :: EffectFn2 Uint8Array FsFile Int
 
 writeSync :: Uint8Array -> FsFile -> Effect Int
 writeSync buffer file = runEffectFn2 _writeSync buffer file
 
-foreign import _truncate :: EffectFn4 (Nullable Int) FsFile (Effect Unit) (EffectFn1 Error Unit) Unit
+foreign import _truncate :: EffectFn4 (Nullable Int) FsFile (EffectFn1 Unit Unit) (EffectFn1 Error Unit) Unit
 
-foreign import _sync :: EffectFn3 FsFile (Effect Unit) (EffectFn1 Error Unit) Unit
+foreign import _sync :: EffectFn3 FsFile (EffectFn1 Unit Unit) (EffectFn1 Error Unit) Unit
 
 sync :: FsFile -> Aff Unit
-sync file = makeAff \cb ->
-  let
-    onSuccess = cb (Right unit)
-    onFailure = cb <<< Left
-  in
-    runEffectFn3 _sync file onSuccess (mkEffectFn1 onFailure) *> mempty
+sync file = runAsyncEffect1 _sync file
 
 truncate :: Maybe Int -> FsFile -> Aff Unit
-truncate size file = makeAff \cb ->
-  let
-    onSuccess = cb (Right unit)
-    onFailure = cb <<< Left
-  in
-    runEffectFn4 _truncate (toNullable size) file onSuccess (mkEffectFn1 onFailure) *> mempty
+truncate size file = runAsyncEffect2 _truncate (toNullable size) file
 
-foreign import _unlock :: EffectFn3 FsFile (Effect Unit) (EffectFn1 Error Unit) Unit
+foreign import _unlock :: EffectFn3 FsFile (EffectFn1 Unit Unit) (EffectFn1 Error Unit) Unit
 
 unlock :: FsFile -> Aff Unit
-unlock file = makeAff \cb ->
-  let
-    onSuccess = cb (Right unit)
-    onFailure = cb <<< Left
-  in
-    runEffectFn3 _unlock file onSuccess (mkEffectFn1 onFailure) *> mempty
+unlock file = runAsyncEffect1 _unlock file
 
 foreign import _unlockSync :: EffectFn1 FsFile Unit
 

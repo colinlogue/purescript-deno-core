@@ -16,14 +16,14 @@ module Deno.Subprocess.ChildProcess
 import Prelude
 
 import Data.ArrayBuffer.Types (Uint8Array)
-import Data.Either (Either(..))
 import Data.Maybe (Maybe(..), maybe)
 import Data.Nullable (Nullable, toMaybe, toNullable)
 import Deno.Runtime.Signal (Signal(..))
 import Effect (Effect)
-import Effect.Aff (Aff, makeAff)
+import Effect.Aff (Aff)
+import Deno.Util (runAsyncEffect1)
 import Effect.Exception (Error)
-import Effect.Uncurried (EffectFn1, EffectFn2, EffectFn3, mkEffectFn1, runEffectFn1, runEffectFn2, runEffectFn3)
+import Effect.Uncurried (EffectFn1, EffectFn2, EffectFn3, runEffectFn1, runEffectFn2)
 import Web.Streams.ReadableStream (ReadableStream)
 import Web.Streams.WritableStream (WritableStream)
 
@@ -169,12 +169,7 @@ convertCommandOutput raw =
   }
 
 status :: ChildProcess -> Aff CommandStatus
-status childProcess = makeAff \cb ->
-  let
-    onSuccess = cb <<< Right <<< convertCommandStatus
-    onError = cb <<< Left
-  in
-    runEffectFn3 _status childProcess (mkEffectFn1 onSuccess) (mkEffectFn1 onError) *> mempty
+status childProcess = convertCommandStatus <$> runAsyncEffect1 _status childProcess
 
 stdin :: ChildProcess -> Effect (WritableStream Uint8Array)
 stdin = runEffectFn1 _stdin
@@ -191,12 +186,7 @@ kill maybeSignal childProcess =
   in runEffectFn2 _kill (toNullable signalString) childProcess
 
 output :: ChildProcess -> Aff CommandOutput
-output childProcess = makeAff \cb ->
-  let
-    onSuccess = cb <<< Right <<< convertCommandOutput
-    onError = cb <<< Left
-  in
-    runEffectFn3 _output childProcess (mkEffectFn1 onSuccess) (mkEffectFn1 onError) *> mempty
+output childProcess = convertCommandOutput <$> runAsyncEffect1 _output childProcess
 
 ref :: ChildProcess -> Effect Unit
 ref = runEffectFn1 _ref
