@@ -1,14 +1,12 @@
 FROM denoland/deno:alpine-1.43.6
 
-# Install Node.js, npm, git, and bash
+# Install Node.js, npm, git, bash, and curl
 RUN apk add --no-cache \
     nodejs \
     npm \
     git \
     bash \
     curl \
-    shadow \
-    su-exec \
     && npm install -g typescript
 
 # Create a non-root user that matches the default vscode user
