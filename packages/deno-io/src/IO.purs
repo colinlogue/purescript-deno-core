@@ -1,5 +1,8 @@
 module Deno.IO
   ( consoleSize
+  , stderr
+  , stdin
+  , stdout
   ) where
 
 import Deno.IO.OutputStream (OutputStream)

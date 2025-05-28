@@ -1,4 +1,10 @@
-module Deno.IO.OutputStream where
+module Deno.IO.OutputStream
+  ( OutputStream
+  , writable
+  , write
+  , writeSync
+  , close
+  )where
 
 import Prelude
 
