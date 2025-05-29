@@ -1,3 +1,71 @@
+// Synchronous versions for Deno.FileSystem
+export const _chmodSync: EffectFn2<string | URL, number, void> = (path, mode) => {
+  Deno.chmodSync(path, mode);
+};
+
+export const _chownSync: EffectFn3<string | URL, number | null, number | null, void> = (path, uid, gid) => {
+  Deno.chownSync(path, uid, gid);
+};
+
+export const _copyFileSync: EffectFn2<string | URL, string | URL, void> = (from, to) => {
+  Deno.copyFileSync(from, to);
+};
+
+export const _createSync: EffectFn1<string | URL, Deno.FsFile> = (path) => {
+  return Deno.createSync(path);
+};
+
+export const _linkSync: EffectFn2<string, string, void> = (oldPath, newPath) => {
+  Deno.linkSync(oldPath, newPath);
+};
+
+export const _mkdirSync: EffectFn2<Deno.MkdirOptions, string | URL, void> = (opts, path) => {
+  Deno.mkdirSync(path, opts);
+};
+
+export const _openSync: EffectFn2<Deno.OpenOptions, string | URL, Deno.FsFile> = (opts, path) => {
+  return Deno.openSync(path, opts);
+};
+
+export const _readFileSync: EffectFn1<string | URL, Uint8Array> = (path) => {
+  return Deno.readFileSync(path);
+};
+
+export const _readTextFileSync: EffectFn1<string | URL, string> = (path) => {
+  return Deno.readTextFileSync(path);
+};
+
+export const _removeSync: EffectFn2<string | URL, boolean, void> = (path, recursive) => {
+  Deno.removeSync(path, { recursive });
+};
+
+export const _renameSync: EffectFn2<string | URL, string | URL, void> = (oldPath, newPath) => {
+  Deno.renameSync(oldPath, newPath);
+};
+
+export const _statSync: EffectFn1<string | URL, Deno.FileInfo> = (path) => {
+  return Deno.statSync(path);
+};
+
+export const _lstatSync: EffectFn1<string | URL, Deno.FileInfo> = (path) => {
+  return Deno.lstatSync(path);
+};
+
+export const _realPathSync: EffectFn1<string | URL, string> = (path) => {
+  return Deno.realPathSync(path);
+};
+
+export const _readLinkSync: EffectFn1<string | URL, string> = (path) => {
+  return Deno.readLinkSync(path);
+};
+
+export const _writeFileSync: EffectFn3<Deno.WriteFileOptions, string | URL, Uint8Array, void> = (opts, path, data) => {
+  Deno.writeFileSync(path, data, opts);
+};
+
+export const _writeTextFileSync: EffectFn3<Deno.WriteFileOptions, string | URL, string, void> = (opts, path, data) => {
+  Deno.writeTextFileSync(path, data, opts);
+};
 import type {
   EffectFn1,
   EffectFn2,
