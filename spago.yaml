@@ -1,6 +1,6 @@
 workspace:
   packageSet:
-    registry: 64.10.0
+    registry: 77.8.0
   extraPackages:
     spec-deno:
       git: https://github.com/colinlogue/purescript-spec-deno.git
