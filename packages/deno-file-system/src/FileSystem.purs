@@ -1,6 +1,5 @@
 module Deno.FileSystem
   ( SymlinkType(..)
-  , DirEntry
   , chmod
   , chmodSync
   , chown
@@ -55,11 +54,10 @@ module Deno.FileSystem
 import Prelude
 
 import Data.ArrayBuffer.Types (Uint8Array)
--- Remove unused import
--- import Data.Either (Either(..))
 import Data.IsStringOrUrl (class IsStringOrUrl, StringOrUrl, toStringOrUrl)
 import Data.Maybe (Maybe)
 import Data.Nullable (Nullable, toNullable)
+import Deno.FileSystem.DirEntry (DirEntry)
 import Deno.FileSystem.FileInfo (FileInfo)
 import Deno.FileSystem.FsFile (FsFile)
 import Deno.FileSystem.FsWatcher (FsWatcher)
@@ -231,9 +229,6 @@ writeTextFile :: forall a. IsStringOrUrl a => WriteFileOptions -> a -> String ->
 writeTextFile opts path content = runAsyncEffect3 _writeTextFile opts (toStringOrUrl path) content
 
 -- Additional file system operations
-
--- Directory reading with simple DirEntry representation
-foreign import data DirEntry :: Type
 
 readDir :: forall a. IsStringOrUrl a => a -> Aff (Array DirEntry)
 readDir path = runAsyncEffect1 _readDir (toStringOrUrl path)
