@@ -93,9 +93,9 @@ foreign import cwd :: Effect String
 
 foreign import execPath :: Effect String
 
-foreign import _exit :: EffectFn1 Int Unit
+foreign import _exit :: forall a. EffectFn1 Int a
 
-exit :: Int -> Effect Unit
+exit :: forall a. Int -> Effect a
 exit code = runEffectFn1 _exit code
 
 foreign import _gid :: Effect (Nullable Int)
